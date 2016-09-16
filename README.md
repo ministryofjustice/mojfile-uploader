@@ -4,7 +4,7 @@ TODO: Document the principles and API
 
 ## Setup
 
-An S3 bucket is required, to store the uploaded files. This bucket
+An S3 bucket is required to store the uploaded files. This bucket
 should have the minimum possible permissions; list objects, put object,
 delete object.
 

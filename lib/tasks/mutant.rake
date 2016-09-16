@@ -2,8 +2,8 @@
 task :mutant do
   vars = 'NOCOVERAGE=true'
   flags = '--include lib --use rspec --fail-fast'
-  unless system("#{vars} mutant #{flags} MojFileUploader*")
-    raise 'Mutation testing failed'
+  unless system("#{vars} mutant #{flags} MojFile*")
+    raise 'mutation testing failed'
   end
 end
 

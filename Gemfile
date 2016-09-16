@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 source 'https://rubygems.org'
 
+gem 'aws-sdk'
 gem 'pry'
 gem 'puma'
 gem 'rake'
 gem 'rest-client'
-gem 's3', '~> 0.3.24'
 gem 'sinatra'
 
 group :development, :test do
@@ -18,7 +18,9 @@ group :test do
   gem 'brakeman'
   gem 'capybara'
   gem 'fuubar'
+  gem 'rack-test'
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
   gem 'simplecov', require: false
+  gem 'webmock'
 end

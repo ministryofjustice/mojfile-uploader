@@ -1,8 +1,8 @@
 require_relative '../spec_helper'
 
-RSpec.feature 'Status' do
+RSpec.describe 'Status' do
   it 'reports stats as OK' do
-    visit '/status'
-    expect(page.body).to eq( { status: 'OK' }.to_json )
+    get '/status'
+    expect(last_response.body).to eq( { status: 'OK' }.to_json )
   end
 end
