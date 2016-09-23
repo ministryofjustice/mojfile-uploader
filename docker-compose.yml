@@ -1,0 +1,27 @@
+version: '2'
+services:
+  # Uploader API
+  uploader:
+    build: .
+    command: puma
+    env_file: .env
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "9292:9292"
+    links:
+      - clamav-rest
+  # Virus Scanner
+  clamav:
+    image: quay.io/ukhomeofficedigital/clamav:v1.1.0
+  clamav-rest:
+    image: quay.io/ukhomeofficedigital/clamav-rest:v1.1.0
+    links:
+      - clamav:clamav-server
+    environment:
+      HOST: clamav-server
+      PORT: 3310
+    depends_on:
+      - clamav
+    ports:
+      - 8080:8080
