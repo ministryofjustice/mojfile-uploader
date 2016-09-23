@@ -13,9 +13,9 @@ services:
       - clamav-rest
   # Virus Scanner
   clamav:
-    image: quay.io/ukhomeofficedigital/clamav:v1.1.0
+    image: registry.service.dsd.io/ministryofjustice/malware-scanner-service-clamav:v1.1.0
   clamav-rest:
-    image: quay.io/ukhomeofficedigital/clamav-rest:v1.1.0
+    image: registry.service.dsd.io/ministryofjustice/malware-scanner-service-clamav-rest:v1.1.0
     links:
       - clamav:clamav-server
     environment:
