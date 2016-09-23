@@ -8,12 +8,8 @@ An S3 bucket is required to store the uploaded files. This bucket
 should have the minimum possible permissions; list objects, put object,
 delete object.
 
-`scripts/setup/` contains scripts and files to create an S3 bucket, an
-IAM user, and apply the appropriate security policy.
-
-The setup script has some pre-requisites, and requires some values (IAM
-user and S3 bucket names) which are hard-coded as constants, so please
-read `scripts/setup/README.md` before running any of the scripts.
+The scripts for easy automation of these tasks can be found in the
+[Mojfile S3 bucket setup repo](https://github.com/ministryofjustice/mojfile-s3-bucket-setup)
 
 ## Run
 
