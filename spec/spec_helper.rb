@@ -24,4 +24,16 @@ RSpec.configure do |config|
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
+  config.around(:each) do |example|
+    original_bucket = ENV['BUCKET_NAME']
+    original_key = ENV['ACCESS_KEY_ID']
+    original_secret= ENV['SECRET_ACCESS_KEY']
+    ENV['BUCKET_NAME'] = 'uploader-test-bucket'
+    ENV['ACCESS_KEY_ID'] = 'dummy key'
+    ENV['SECRET_ACCESS_KEY'] = 'dummy secret'
+    example.run
+    ENV['BUCKET_NAME'] = original_bucket
+    ENV['ACCESS_KEY_ID'] = original_key
+    ENV['SECRET_ACCESS_KEY'] = original_secret
+  end
 end

@@ -9,13 +9,6 @@ RSpec.describe MojFile::Add do
     }
   }
 
-  around do |example|
-    original_bucket = ENV['BUCKET_NAME']
-    ENV['BUCKET_NAME'] = 'uploader-test-bucket'
-    example.run
-    ENV['BUCKET_NAME'] = original_bucket
-  end
-
   before do
     allow(SecureRandom).to receive(:uuid).and_return(12345)
   end
