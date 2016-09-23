@@ -9,6 +9,20 @@ module MojFile
       { status: 'OK' }.to_json
     end
 
+    get '/:collection_ref' do |collection_ref|
+      list = List.call(collection_ref)
+
+      if list.files?
+        status(200)
+        body(list.files.to_json)
+      else
+        status(404)
+        body({
+          errors: ["Collection '#{collection_ref}' does not exist or is empty."]
+        }.to_json)
+      end
+    end
+
     post '/?:collection_ref?/new' do |collection_ref|
       @add = Add.new(collection_ref: collection_ref,
                      params: body_params)
@@ -23,10 +37,10 @@ module MojFile
       end
     end
 
-		helpers do
-			def body_params
-				JSON.parse(request.body.read)
-			end
-		end
+    helpers do
+      def body_params
+        JSON.parse(request.body.read)
+      end
+    end
   end
 end
