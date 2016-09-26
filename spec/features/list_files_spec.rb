@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 RSpec.describe MojFile::List do
   let!(:s3_stub) {
-    stub_request(:get, "https://uploader-test-bucket.s3.amazonaws.com/?encoding-type=url&prefix=12345").
+    stub_request(:get, /uploader-test-bucket.+amazonaws\.com\/\?encoding-type=url&prefix=12345/).
     to_return(body: aws_response, status: 200)
   }
 
