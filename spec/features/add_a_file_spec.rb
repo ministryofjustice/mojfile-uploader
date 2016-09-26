@@ -18,11 +18,24 @@ RSpec.describe MojFile::Add do
       with(body: "RW5jb2RlZCBkb2N1bWVudCBib2R5\n")
   }
 
+  let!(:av_stub) {
+    # Ideally, I would match the request body for filename and data.  This
+    # would remove the need for unit tests for these specific attributes.
+    # However, webmock does not yet support this for multipart requests.
+    stub_request(:post, "http://clamav-rest:8080/scan").
+      to_return(body: "Everything ok : true\n")
+  }
+
   context 'successfully adding a file' do
     context 'generating a new collection_reference' do
       it 'uploads the file to s3' do
         post '/new', params.to_json
         expect(s3_stub).to have_been_requested
+      end
+
+      it 'sends the file file to the av service for scanning' do
+        post '/new', params.to_json
+        expect(av_stub).to have_been_requested
       end
 
       it 'returns a 200' do

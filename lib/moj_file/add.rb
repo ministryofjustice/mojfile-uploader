@@ -29,11 +29,19 @@ module MojFile
       errors.empty?
     end
 
+    def scan_clear?
+      scan.scan_clear?
+    end
+
     def file_key
       @file_key ||= "#{SecureRandom.uuid}.#{title}#{original_extension}"
     end
 
     private
+
+    def scan
+      Scan.new(filename: filename, data: file_data)
+    end
 
     def bucket_name
       ENV.fetch('BUCKET_NAME')
