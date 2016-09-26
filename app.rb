@@ -37,6 +37,11 @@ module MojFile
       end
     end
 
+    delete '/:collection_ref/:filename' do |collection_ref, filename|
+      Delete.delete!(collection: collection_ref, file: filename)
+      status(204)
+    end
+
     helpers do
       def body_params
         JSON.parse(request.body.read)
