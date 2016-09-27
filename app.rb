@@ -24,17 +24,22 @@ module MojFile
     end
 
     post '/?:collection_ref?/new' do |collection_ref|
-      @add = Add.new(collection_ref: collection_ref,
+      add = Add.new(collection_ref: collection_ref,
                      params: body_params)
 
-      if @add.valid?
-        @add.upload
+      if add.valid?
+        add.upload
         status(200)
-        body({ collection: @add.collection, key: @add.file_key }.to_json)
+        body({ collection: add.collection, key: add.file_key }.to_json)
       else
         status(422) # Unprocessable entity
-        return({ errors: @add.errors }.to_json)
+        body({ errors: add.errors }.to_json)
       end
+    end
+
+    delete '/:collection_ref/:filename' do |collection_ref, filename|
+      Delete.delete!(collection: collection_ref, file: filename)
+      status(204)
     end
 
     helpers do
