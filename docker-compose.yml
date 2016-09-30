@@ -11,7 +11,7 @@ services:
       - "9292:9292"
     links:
       - clamav-rest
-  # Virus Scanner
+  # Virus Scanner (https://github.com/ministryofjustice/malware-scanner-service)
   clamav:
     image: registry.service.dsd.io/ministryofjustice/malware-scanner-service-clamav:v1.1.0
   clamav-rest:
