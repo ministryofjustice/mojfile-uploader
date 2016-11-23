@@ -27,10 +27,13 @@ module MojFile
       add = Add.new(collection_ref: collection_ref,
                      params: body_params)
 
-      if add.valid?
+      if add.valid? && add.scan_clear?
         add.upload
         status(200)
         body({ collection: add.collection, key: add.file_key }.to_json)
+      elsif !add.scan_clear?
+        status(400)
+        body({ errors: ['Virus scan failed'] }.to_json)
       else
         status(422) # Unprocessable entity
         body({ errors: add.errors }.to_json)
