@@ -19,6 +19,14 @@ cp .env.example .env
 docker-compose build
 docker-compose up
 ```
+
+## Scanner endpoint
+
+If the virus scanner is not available from this appication at
+`http://clamav-rest:8080/scan` then you will need to set the
+`SCANNER_URL` environment variable to point at the correct endpoint.  It
+*should* be available if the app is launched using docker compose.
+
 ## Run outside docker
 
 ```bash

@@ -4,7 +4,7 @@ require_relative 'dummy_path'
 module MojFile
   class Scan
     # clamav-rest is remapped in docker-compose.yml
-    SCANNER_URL = 'http://clamav-rest:8080/scan'.freeze
+    SCANNER_URL = ENV.fetch('SCANNER_URL', 'http://clamav-rest:8080/scan').freeze
 
     attr_accessor :filename, :data
 
