@@ -10,6 +10,9 @@ delete object.
 
 The scripts for easy automation of these tasks can be found in the
 [Mojfile S3 bucket setup repo](https://github.com/ministryofjustice/mojfile-s3-bucket-setup)
+However, those scripts assume that an IAM *user* will authenticate to the S3 bucket. 
+In production, IAM *roles* will be used, such that the container in which the application
+is running is granted (or not) appropriate permissions to operate on the S3 bucket.
 
 ## Run
 
