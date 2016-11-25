@@ -1,5 +1,6 @@
 require 'rest_client'
 require_relative 'dummy_path'
+require 'pp'
 
 module MojFile
   class Scan
@@ -14,7 +15,14 @@ module MojFile
     end
 
     def scan_clear?
-      post.body.eql?("Everything ok : true\n")
+      p = post
+      puts "==============================================="
+      pp p
+      body = p.body
+      puts "-----------------------------------------------"
+      puts body
+      puts "-----------------------------------------------"
+      body.eql?("Everything ok : true\n")
     end
 
     private
