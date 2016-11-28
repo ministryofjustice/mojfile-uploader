@@ -1,5 +1,4 @@
 require 'securerandom'
-require 'base64'
 
 module MojFile
   class Add
@@ -61,16 +60,8 @@ module MojFile
         e << 'file_filename must be provided' if filename.empty?
         if file_data.empty?
           e << 'file_data must be provided'
-        elsif !base_64_encoded?
-          e << 'file_data must be base64 encoded'
         end
       }
-    end
-
-    def base_64_encoded?
-      file_data.match(
-        /\A([A-Za-z0-9+]{4})*([A-Za-z0-9+]{4}|[A-Za-z0-9+]{3}=|[A-Za-z0-9+]{2}==)$/
-      )
     end
   end
 end
