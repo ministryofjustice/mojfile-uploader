@@ -1,6 +1,26 @@
 # File uploader API
 
-TODO: Document the principles and API
+TODO: Document the API
+
+mojfile-uploader is designed as a drop-in component that can be added to any project
+to facilitate users uploading files.
+
+Any files that are uploaded are passed through ClamAV virus scanning, which runs on
+a pair of bundled docker containers (one running the ClamAV daemon, and the other
+exposing a REST interface to it).
+
+Clean files are uploaded to an S3 bucket. Infected files are rejected.
+
+The assumption here is that files are being uploaded by users, but that a separate
+admin interface will be used to download the files. This means that, if the user's
+credentials/session are compromised, an attacker would not be able to view the content
+of any of the user's uploaded files. To this end;
+
+* The uploader API does not expose any 'download' function
+* The S3 bucket security settings should not permit the uploader to download any files
+
+The uploader can list the uploaded files, and can delete any of them (so that the user
+can correct mistakes).
 
 ## Setup
 
@@ -10,6 +30,9 @@ delete object.
 
 The scripts for easy automation of these tasks can be found in the
 [Mojfile S3 bucket setup repo](https://github.com/ministryofjustice/mojfile-s3-bucket-setup)
+However, those scripts assume that an IAM *user* will authenticate to the S3 bucket. 
+In production, IAM *roles* will be used, such that the container in which the application
+is running is granted (or not) appropriate permissions to operate on the S3 bucket.
 
 ## Run
 
