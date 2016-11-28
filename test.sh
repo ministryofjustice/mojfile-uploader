@@ -3,54 +3,56 @@
 # Script to test the file uploader application. Replace the URL with wherever the
 # uploader application should be, from your point of view
 
-# Listing files:
-#
-# You can test this using curl;
-#
-#   $ curl 'http://localhost:9292/12345'
-#
+UPLOADER_URL=http://localhost:9292
+COLLECTION_REF=12345
+
+main() {
+  echo "List files..................."
+  list_files
+  echo
+  echo
+
+  echo "Clean file..................."
+  upload_clean_file
+  echo
+  echo
+
+  echo "Infected file................"
+  upload_infected_file
+  echo
+}
+
 # This should respond with;
-#
 #  {"errors":["Collection '12345' does not exist or is empty."]}
-#
+# ...or a list of the files in the collection
+list_files() {
+  curl ${UPLOADER_URL}/${COLLECTION_REF}
+}
 
+upload_clean_file() {
+  data="{\"file_title\":\"Test Upload\",\"file_filename\":\"testfile.docx\",\"file_data\":\"RW5jb2RlZCBkb2N1bWVudCBib2R5\\n\"}"
 
-# Uploading a file
+  curl -X POST \
+    -H "Content-Type: application/json" \
+    -d "${data}" \
+    ${UPLOADER_URL}/new
+}
 
-data="{\"file_title\":\"Test Upload\",\"file_filename\":\"testfile.docx\",\"file_data\":\"RW5jb2RlZCBkb2N1bWVudCBib2R5\\n\"}"
+function upload_infected_file() {
+  # This is the eicar virus scanning test pattern (ClamAV will recognise this as infected, but it's not)
+  # NB: 4\\ should be 4\ but something is escaping this when we pass it through sinatra/ruby/something
+  eicar='X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*'
+  data="{\"file_title\":\"Infected Upload\",\"file_filename\":\"testfile2.docx\",\"file_data\":\"${eicar}\n\"}"
 
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -d "${data}" \
-  http://localhost:9292/new
+  curl -X POST \
+    -H "Content-Type: application/json" \
+    -d "${data}" \
+    ${UPLOADER_URL}/new
 
-# This should respond with something like this;
-#
-#  {"collection":"e921ca09-cb64-40d2-b414-1bc80ca709c6","key":"be6f311b-1f03-4a24-b624-58c2b0765cd1.Test Upload.docx"}
-#
-# You should then be able to list the files like this;
-#
-#   $ curl 'http://localhost:9292/e921ca09-cb64-40d2-b414-1bc80ca709c6'
-#
-# ...and see the uploaded file in the list
-#
-#  {"collection":"e921ca09-cb64-40d2-b414-1bc80ca709c6","files":[{"key":"e921ca09-cb64-40d2-b414-1bc80ca709c6/testfile.docx","title":"testfile.docx","last_modified":"2016-11-23 12:16:37 UTC"}]}
-#
+  # This should respond with;
+  #
+  #  {"errors":["Virus scan failed"]}
+  #
+}
 
-# Trying to upload a virus-infected file
-
-# This is the base64 encoded data from eicar.txt - the virus scanning test pattern (ClamAV will recognise this as infected, but it's not)
-# X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*
-eicar_base64="WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFO\nVElWSVJVUy1URVNULUZJTEUhJEgrSCo=\n"
-data="{\"file_title\":\"Infected Upload\",\"file_filename\":\"testfile2.docx\",\"file_data\":\"${eicar_base64}\\n\"}"
-
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -d "${data}" \
-  http://localhost:9292/new
-
-# This should respond with;
-#
-#  {"errors":["Virus scan failed"]}
-#
-
+main
