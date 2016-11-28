@@ -1,6 +1,5 @@
 require 'rest_client'
 require_relative 'dummy_path'
-require 'pp'
 
 module MojFile
   class Scan
