@@ -115,15 +115,4 @@ RSpec.describe MojFile::Add do
       end
     end
   end
-
-  context 'file_data is not base64 encoded' do
-    before do
-        params.merge!(file_data: 'some junk that is not base64 encoded')
-    end
-
-    it 'explains the file data is incorrectly encoded' do
-      post '/new', params.to_json
-      expect(last_response.body).to match(/\"errors\":\[\"file_data must be base64 encoded\"\]/)
-    end
-  end
 end
