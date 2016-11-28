@@ -15,14 +15,7 @@ module MojFile
     end
 
     def scan_clear?
-      p = post
-      puts "==============================================="
-      pp p
-      body = p.body
-      puts "-----------------------------------------------"
-      puts body
-      puts "-----------------------------------------------"
-      body.eql?("Everything ok : true\n")
+      post.body.match(/true/)
     end
 
     private
