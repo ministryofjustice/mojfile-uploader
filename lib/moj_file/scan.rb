@@ -7,11 +7,11 @@ module MojFile
     # clamav-rest is remapped in docker-compose.yml
     SCANNER_URL = ENV.fetch('SCANNER_URL', 'http://clamav-rest:8080/scan').freeze
 
-    attr_accessor :filename, :data
+    attr_reader :filename, :dummy_file
 
     def initialize(filename:, data:)
       @filename = filename
-      @data = DummyPath.new(data)
+      @dummy_file = DummyPath.new(data)
     end
 
     def scan_clear?
@@ -28,7 +28,7 @@ module MojFile
     private
 
     def post
-      RestClient.post(SCANNER_URL, name: filename, file: data, multipart: true)
+      RestClient.post(SCANNER_URL, name: filename, file: dummy_file, multipart: true)
     end
   end
 end
