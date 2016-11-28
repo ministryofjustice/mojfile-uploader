@@ -30,18 +30,28 @@ delete object.
 
 The scripts for easy automation of these tasks can be found in the
 [Mojfile S3 bucket setup repo](https://github.com/ministryofjustice/mojfile-s3-bucket-setup)
-However, those scripts assume that an IAM *user* will authenticate to the S3 bucket. 
+However, those scripts assume that an IAM *user* will authenticate to the S3 bucket.
 In production, IAM *roles* will be used, such that the container in which the application
 is running is granted (or not) appropriate permissions to operate on the S3 bucket.
 
-## Run
+## Note on AWS Credentials
+
+These are no longer needed in production as we now use roles.  They are
+still required if you want to run the application locally.  They are
+picked up automatically by `aws-sdk` if you use the environment
+variables set in `env.example`.
+
+## Run Locally
 
 ```
 cp .env.example .env
-# ... and update the details in that file with the credentials created above
+# update the details in that file with the credentials created above
+# remove the `export` commands
 docker-compose build
 docker-compose up
 ```
+
+It does not need the `.env` file in the production container.
 
 ## Scanner endpoint
 
@@ -53,6 +63,8 @@ If the virus scanner is not available from this appication at
 ## Run outside docker
 
 ```bash
+cp .env.example .env
+# ... and update the details in that file with the credentials created above
 bundle exec rackup
 ```
 
