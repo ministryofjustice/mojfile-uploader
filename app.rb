@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'json'
+require 'logstash-logger'
 require_relative 'lib/moj_file'
 require 'pry'
 

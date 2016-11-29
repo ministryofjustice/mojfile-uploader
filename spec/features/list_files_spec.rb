@@ -33,12 +33,12 @@ RSpec.describe MojFile::List do
             {
               key: '12345/solicitor.docx',
               title: 'solicitor.docx',
-              last_modified: '2016-10-12 17:50:30 UTC'
+              last_modified: '2016-10-12T17:50:30.000Z'
             },
             {
               key: '12345/hmrc_appeal.docx',
               title: 'hmrc_appeal.docx',
-              last_modified: '2016-10-12 17:50:30 UTC'
+              last_modified: '2016-10-12T17:50:30.000Z'
             }
         ]
         }.to_json
