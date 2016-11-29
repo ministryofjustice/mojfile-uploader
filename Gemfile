@@ -2,6 +2,7 @@
 source 'https://rubygems.org'
 
 gem 'aws-sdk'
+gem 'logstash-logger'
 gem 'pry'
 gem 'puma'
 gem 'rake'
