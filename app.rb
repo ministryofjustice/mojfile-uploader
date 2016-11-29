@@ -6,11 +6,6 @@ require 'pry'
 
 module MojFile
   class Uploader < Sinatra::Base
-    configure :production, :development do
-      enable :logging
-      use Rack::CommonLogger, LogStashLogger.new(type: :stdout)
-    end
-
     get '/status' do
       { status: 'OK' }.to_json
     end
