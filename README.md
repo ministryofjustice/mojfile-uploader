@@ -55,7 +55,7 @@ It does not need the `.env` file in the production container.
 
 ## Scanner endpoint
 
-If the virus scanner is not available from this appication at
+If the virus scanner is not available from this application at
 `http://clamav-rest:8080/scan` then you will need to set the
 `SCANNER_URL` environment variable to point at the correct endpoint.  It
 *should* be available if the app is launched using docker compose.
