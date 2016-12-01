@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'base64'
 
 module MojFile
   class Add
@@ -20,7 +21,7 @@ module MojFile
     end
 
     def upload
-      object.put(body: file_data)
+      object.put(body: decode(file_data))
     end
 
     def valid?
@@ -32,14 +33,14 @@ module MojFile
       scan.scan_clear?
     end
 
-    def file_key
-      @file_key ||= "#{SecureRandom.uuid}.#{title}#{original_extension}"
-    end
-
     private
 
     def scan
       Scan.new(filename: filename, data: file_data)
+    end
+
+    def decode(data)
+      Base64.decode64(data)
     end
 
     def bucket_name
@@ -48,10 +49,6 @@ module MojFile
 
     def object
       s3.bucket(bucket_name).object([collection, filename].join('/'))
-    end
-
-    def original_extension
-      filename[/\.\w+$/]
     end
 
     def validate

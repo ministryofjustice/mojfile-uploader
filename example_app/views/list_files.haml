@@ -1,0 +1,14 @@
+%h2
+  Dropzone simple example
+%p
+  Listing files in collection reference:
+  = locals[:collection_ref]
+
+- if result.nil?
+  No collection or files found.
+
+- else
+  - locals[:result].body[:files].each do |file|
+    %p
+      = file[:title]
+      = file[:last_modified]
