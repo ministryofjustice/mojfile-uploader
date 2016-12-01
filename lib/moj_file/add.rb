@@ -21,7 +21,7 @@ module MojFile
     end
 
     def upload
-      object.put(body: decode(file_data))
+      object.put(body: decoded_file_data)
     end
 
     def valid?
@@ -36,11 +36,11 @@ module MojFile
     private
 
     def scan
-      Scan.new(filename: filename, data: file_data)
+      Scan.new(filename: filename, data: decoded_file_data)
     end
 
-    def decode(data)
-      Base64.decode64(data)
+    def decoded_file_data
+      Base64.decode64(file_data)
     end
 
     def bucket_name
