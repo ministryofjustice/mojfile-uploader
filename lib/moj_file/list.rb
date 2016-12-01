@@ -29,10 +29,14 @@ module MojFile
       objects.map{ |o|
         {
           key: o.key,
-          title: o.key.sub("#{collection}/",''),
+          title: o.key.sub(prefix,''),
           last_modified: o.last_modified
         }
       }
+    end
+
+    def prefix
+      "#{collection}/"
     end
 
     def bucket_name
@@ -40,7 +44,7 @@ module MojFile
     end
 
     def objects
-      @objects ||= s3.bucket(bucket_name).objects(prefix: collection).to_set
+      @objects ||= s3.bucket(bucket_name).objects(prefix: prefix).to_set
     end
   end
 end
