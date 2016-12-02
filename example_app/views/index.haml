@@ -1,0 +1,17 @@
+%script(src='https://code.jquery.com/jquery-3.1.1.min.js')
+%link{type: 'text/css', rel: 'stylesheet', href: 'css/dropzone.css'}
+
+%h2
+  Dropzone simple example
+%p
+  Collection reference:
+  = locals[:collection_ref]
+  %a{href: "/#{locals[:collection_ref]}", target: '_blank'} list files
+
+%form{action: '/upload', class: 'dropzone'}
+  %input{type: 'hidden', name: 'collection_ref', value: locals[:collection_ref]}
+
+%div.uploaded-files
+
+%script(src='js/dropzone.js')
+%script(src='js/dropzone_setup.js')

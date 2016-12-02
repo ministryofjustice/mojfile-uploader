@@ -1,11 +1,14 @@
 require 'spec_helper'
 
 RSpec.describe MojFile::Add do
+  let(:encoded_file_data) { 'QSBkb2N1bWVudCBib2R5\n' }
+  let(:decoded_file_data) { 'A document body' }
+
   let(:params) {
     {
       'file_title' => 'Test Upload',
       'file_filename' => 'testfile.docx',
-      'file_data' =>  Base64.encode64('Encoded document body')
+      'file_data' => encoded_file_data
     }
   }
 
@@ -14,7 +17,7 @@ RSpec.describe MojFile::Add do
       scan = instance_double(MojFile::Scan)
       expect(scan).to receive(:scan_clear?)
       expect(MojFile::Scan).to receive(:new).
-        with(filename: params['file_filename'], data: params['file_data']).
+        with(filename: params['file_filename'], data: decoded_file_data).
         and_return(scan)
     end
 
