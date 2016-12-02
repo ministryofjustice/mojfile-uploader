@@ -80,7 +80,7 @@ bundle exec rake
 
 ## File uploader example app
 
-Included in directory `example_app` there is an simple Sinatra app to show how to integrate the File Uploader JQuery plugin with the client gem.
+Included in the directory `example_app` there is a simple Sinatra app to show how to integrate the File Uploader JQuery plugin with the client gem.
 
 ### Running the app
 
