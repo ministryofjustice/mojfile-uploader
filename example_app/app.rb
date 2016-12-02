@@ -37,12 +37,8 @@ module MojFileUploadExample
     end
 
     get '/:collection_ref' do |collection_ref|
-      begin
-        result = MojFileUploaderApiClient::ListFiles.new(collection_ref: collection_ref).call
-        log('List result: ' + result.inspect)
-      rescue MojFileUploaderApiClient::RequestError => ex
-        log('List error: ' + ex.message)
-      end
+      result = MojFileUploaderApiClient::ListFiles.new(collection_ref: collection_ref).call
+      log('List result: ' + result.inspect)
 
       haml :list_files, locals: {collection_ref: collection_ref, result: result}
     end
@@ -52,7 +48,7 @@ module MojFileUploadExample
       result = MojFileUploaderApiClient::AddFile.new(file_args).call
       log('Upload result: ' + result.inspect)
 
-      status(201)
+      status(result.code)
       body(result.body.to_json)
     end
 
