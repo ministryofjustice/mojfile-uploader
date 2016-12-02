@@ -77,3 +77,20 @@ To test, run:
 bundle install
 bundle exec rake
 ```
+
+## File uploader example app
+
+Included in directory `example_app` there is an simple Sinatra app to show how to integrate the File Uploader JQuery plugin with the client gem.
+
+### Running the app
+
+First make sure in file `example_app/config.ru` the HttpClient base_url points to the right URL/port where the MOJ Uploader app is running.
+
+In the `example_app` directory, run:
+
+```sh
+bundle
+bundle exec puma -p 3003  # or any other port you want
+```
+
+Go to `http://localhost:3003` to see the uploader example.
