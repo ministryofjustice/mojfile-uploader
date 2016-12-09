@@ -11,11 +11,12 @@ services:
       - "9292:9292"
     links:
       - clamav-rest
-  # Virus Scanner (https://github.com/ministryofjustice/malware-scanner-service)
   clamav:
-    image: registry.service.dsd.io/ministryofjustice/malware-scanner-service-clamav:v1.1.0
+    # https://github.com/ministryofjustice/moj-clamav-daemon
+    image: registry.service.dsd.io/ministryofjustice/clamav:0.1.0
   clamav-rest:
-    image: registry.service.dsd.io/ministryofjustice/malware-scanner-service-clamav-rest:v1.1.0
+    # https://github.com/ministryofjustice/moj-clamav-rest
+    image: registry.service.dsd.io/ministryofjustice/clamav-rest:0.1.0
     links:
       - clamav:clamav-server
     environment:
