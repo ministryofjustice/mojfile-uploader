@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+
+gem 'pry'
+gem 'puma'
+gem 'haml'
+gem 'sinatra'
+gem 'mojfile-uploader-api-client', git: 'https://github.com/ministryofjustice/mojfile-uploader-api-client.git'

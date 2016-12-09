@@ -33,7 +33,7 @@ module MojFile
       if add.valid? && clear
         add.upload
         status(200)
-        body({ collection: add.collection, key: add.file_key }.to_json)
+        body({ collection: add.collection, key: add.filename }.to_json)
       elsif !clear
         status(400)
         body({ errors: ['Virus scan failed'] }.to_json)

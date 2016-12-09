@@ -1,11 +1,14 @@
 require_relative '../spec_helper'
 
 RSpec.describe MojFile::Add do
+  let(:encoded_file_data) { 'QSBkb2N1bWVudCBib2R5\n' }
+  let(:decoded_file_data) { 'A document body' }
+
   let(:params) {
     {
       file_title: 'Test Upload',
       file_filename: 'testfile.docx',
-      file_data: Base64.encode64('Encoded document body')
+      file_data: encoded_file_data
     }
   }
 
@@ -15,7 +18,7 @@ RSpec.describe MojFile::Add do
 
   let!(:s3_stub) {
     stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/12345\/testfile.docx/).
-      with(body: "RW5jb2RlZCBkb2N1bWVudCBib2R5\n")
+      with(body: decoded_file_data)
   }
 
   let!(:av_stub) {
@@ -47,7 +50,7 @@ RSpec.describe MojFile::Add do
 
         it 'contains the file key' do
           post '/new', params.to_json
-          expect(last_response.body).to match(/\"key\":\"12345.Test Upload.docx\"/)
+          expect(last_response.body).to match(/\"key\":\"testfile.docx\"/)
         end
 
         it 'contains the collection reference' do
