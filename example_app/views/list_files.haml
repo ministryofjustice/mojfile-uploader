@@ -1,14 +1,18 @@
+- errors = locals[:result].body[:errors]
+- files  = locals[:result].body[:files]
+
 %h2
   Dropzone simple example
 %p
   Listing files in collection reference:
   = locals[:collection_ref]
 
-- if result.nil?
-  No collection or files found.
+- if errors
+  %p
+    = errors
 
-- else
-  - locals[:result].body[:files].each do |file|
+- if files
+  - files.each do |file|
     %p
       = file[:title]
       = file[:last_modified]
