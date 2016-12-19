@@ -19,6 +19,7 @@ end
 group :test do
   gem 'brakeman'
   gem 'capybara'
+  gem 'dotenv'
   gem 'fuubar'
   gem 'rack-test'
   gem 'rubocop', require: false
