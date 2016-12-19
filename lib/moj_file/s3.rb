@@ -5,7 +5,6 @@ module MojFile
     REGION = ENV.fetch('AWS_REGION', 'eu-west-1').freeze
     STATUS_RSS_ENDPOINT =
       "https://status.aws.amazon.com/rss/s3-#{REGION}.rss".freeze
-    )
 
     def s3
       Aws::S3::Resource.new(region: REGION)
