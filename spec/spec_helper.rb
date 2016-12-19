@@ -1,10 +1,12 @@
+ENV['RACK_ENV'] = 'test'
+require 'dotenv'
+Dotenv.load
+
 require_relative '../app'
 require 'rspec'
 require 'rack/test'
 require 'webmock/rspec'
 require 'pry'
-
-ENV['RACK_ENV'] = 'test'
 
 def app
   MojFile::Uploader

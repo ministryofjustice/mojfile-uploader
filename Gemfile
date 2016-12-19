@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 
 gem 'aws-sdk'
 gem 'logstash-logger'
+gem 'nokogiri'
 gem 'pry'
 gem 'puma'
 gem 'rake'
@@ -18,6 +19,7 @@ end
 group :test do
   gem 'brakeman'
   gem 'capybara'
+  gem 'dotenv'
   gem 'fuubar'
   gem 'rack-test'
   gem 'rubocop', require: false
