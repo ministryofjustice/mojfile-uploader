@@ -178,6 +178,7 @@ DEPENDENCIES
   fuubar
   logstash-logger
   mutant-rspec
+  nokogiri
   pry
   pry-byebug
   puma

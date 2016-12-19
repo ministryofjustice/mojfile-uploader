@@ -21,9 +21,4 @@ RSpec.describe MojFile::S3 do
     allow(ENV).to receive(:fetch).with('AWS_REGION', 'eu-west-1').and_return('eu-west-1')
     object.new.s3
   end
-
-  it 'fetches the region from the ENV and has a default' do
-    expect(ENV).to receive(:fetch).with('AWS_REGION', 'eu-west-1').and_return('eu-west-1')
-    object.new.s3
-  end
 end

@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 
 gem 'aws-sdk'
 gem 'logstash-logger'
+gem 'nokogiri'
 gem 'pry'
 gem 'puma'
 gem 'rake'

@@ -6,6 +6,18 @@ require 'pry'
 
 module MojFile
   class Uploader < Sinatra::Base
+    get '/healthcheck' do
+      {
+        dependencies: {
+          external: {
+            s3: {
+              S3::REGION.tr('-','_') => S3.status
+            }
+          }
+        }
+      }.to_json
+    end
+
     get '/status' do
       { status: 'OK' }.to_json
     end
@@ -26,7 +38,7 @@ module MojFile
 
     post '/?:collection_ref?/new' do |collection_ref|
       add = Add.new(collection_ref: collection_ref,
-                     params: body_params)
+                    params: body_params)
 
       clear = add.scan_clear?
 
