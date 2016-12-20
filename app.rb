@@ -13,6 +13,7 @@ module MojFile
 
     get '/healthcheck' do
       {
+        service_status: 'OK',
         dependencies: {
           external: {
             s3: {
@@ -21,10 +22,6 @@ module MojFile
           }
         }
       }.to_json
-    end
-
-    get '/status' do
-      { status: 'OK' }.to_json
     end
 
     get '/:collection_ref' do |collection_ref|
