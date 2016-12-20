@@ -10,6 +10,8 @@ RSpec.describe 'Service status' do
 
   before do
     allow(MojFile::S3).to receive(:status)
+    allow(MojFile::Scan).to receive(:trigger_alert)
+    allow(MojFile::Scan).to receive(:clean_file)
     get '/healthcheck'
   end
 

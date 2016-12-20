@@ -29,6 +29,11 @@ RSpec.describe 'Healthcheck' do
     XML
   }
 
+  before do
+    allow(MojFile::Scan).to receive(:trigger_alert)
+    allow(MojFile::Scan).to receive(:clean_file)
+  end
+
   describe 'happy path' do
     before do
       stub_request(:get, "https://status.aws.amazon.com/rss/s3-eu-west-1.rss").
