@@ -13,18 +13,19 @@ module MojFile
 
     get '/healthcheck' do
       {
+        service_status: 'OK',
         dependencies: {
           external: {
+            av: {
+              detect_infection: Scan.trigger_alert,
+              pass_clean: Scan.clean_file
+            },
             s3: {
               S3::REGION.tr('-','_') => S3.status
             }
           }
         }
       }.to_json
-    end
-
-    get '/status' do
-      { status: 'OK' }.to_json
     end
 
     get '/:collection_ref' do |collection_ref|

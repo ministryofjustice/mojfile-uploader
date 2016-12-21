@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require_relative '../../spec_helper'
 
 RSpec.describe 'Healthcheck' do
   let(:dependencies) {
@@ -28,6 +28,11 @@ RSpec.describe 'Healthcheck' do
       </rss>
     XML
   }
+
+  before do
+    allow(MojFile::Scan).to receive(:trigger_alert)
+    allow(MojFile::Scan).to receive(:clean_file)
+  end
 
   describe 'happy path' do
     before do
