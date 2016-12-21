@@ -23,7 +23,6 @@ RSpec.describe MojFile::S3 do
   end
 
   describe '#s3' do
-
     it 'sets up an AWS::S3::Resource with the correct region' do
       expect(Aws::S3::Resource).to receive(:new).with(region: 'eu-west-1')
       object.new.s3
@@ -34,20 +33,20 @@ RSpec.describe MojFile::S3 do
   describe '.status' do
     let(:status_response) {
       <<-XML
-      <?xml version="1.0" encoding="UTF-8"?>
-      <rss version="2.0">
-        <channel>
-         <item>
-          <title type="text">Service is operating normally</title>
-          <pubDate>Wed,  9 May 2012 12:54:00 PDT</pubDate>
-         </item>
+          <?xml version="1.0" encoding="UTF-8"?>
+          <rss version="2.0">
+            <channel>
+             <item>
+              <title type="text">Service is operating normally</title>
+              <pubDate>Wed,  9 May 2012 12:54:00 PDT</pubDate>
+             </item>
 
-         <item>
-          <title type="text">Increased error rates in Amazon S3</title>
-          <pubDate>Wed,  9 May 2012 12:37:00 PDT</pubDate>
-         </item>
-        </channel>
-      </rss>
+             <item>
+              <title type="text">Increased error rates in Amazon S3</title>
+              <pubDate>Wed,  9 May 2012 12:37:00 PDT</pubDate>
+             </item>
+            </channel>
+          </rss>
       XML
     }
 
@@ -62,9 +61,32 @@ RSpec.describe MojFile::S3 do
       described_class.status
     end
 
-    it 'returns the most current item' do
-      allow(RestClient).to receive(:get).and_return(double('response', body: status_response))
-      expect(described_class.status).to eq('Service is operating normally')
+    context 'OK' do
+      it 'returns the most current item' do
+        allow(RestClient).to receive(:get).and_return(double('response', body: status_response))
+        expect(described_class.status).to eq('OK')
+      end
+    end
+
+    context 'FAILED' do
+      let(:status_response) {
+        <<-XML
+          <?xml version="1.0" encoding="UTF-8"?>
+          <rss version="2.0">
+            <channel>
+             <item>
+              <title type="text">Increased error rates in Amazon S3</title>
+              <pubDate>Wed,  9 May 2012 12:37:00 PDT</pubDate>
+             </item>
+            </channel>
+          </rss>
+        XML
+      }
+
+      it 'returns the most current item' do
+        allow(RestClient).to receive(:get).and_return(double('response', body: status_response))
+        expect(described_class.status).to eq('FAILED')
+      end
     end
 
     # This would be the error if the xpath didn't exist.

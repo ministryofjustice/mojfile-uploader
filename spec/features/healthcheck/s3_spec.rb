@@ -42,8 +42,28 @@ RSpec.describe 'Healthcheck' do
 
     it 'reports the first status from the list for S3 eu-west-1' do
       get '/healthcheck'
-      expect(dependencies[:external][:s3][:eu_west_1]).
-        to eq('Service is operating normally')
+      expect(dependencies[:external][:s3][:eu_west_1]).to eq('OK')
+    end
+
+    context 'service problems' do
+      let(:status_response) {
+        <<-XML
+          <?xml version="1.0" encoding="UTF-8"?>
+          <rss version="2.0">
+            <channel>
+             <item>
+              <title type="text">Increased error rates in Amazon S3</title>
+              <pubDate>Wed,  9 May 2012 12:37:00 PDT</pubDate>
+             </item>
+            </channel>
+          </rss>
+        XML
+      }
+
+      it 'reports the first status from the list for S3 eu-west-1' do
+        get '/healthcheck'
+        expect(dependencies[:external][:s3][:eu_west_1]).to eq('FAILED')
+      end
     end
   end
 
@@ -66,8 +86,7 @@ RSpec.describe 'Healthcheck' do
 
     it 'returns N/A' do
       get '/healthcheck'
-      expect(dependencies[:external][:s3][:eu_west_1]).
-        to eq('N/A')
+      expect(dependencies[:external][:s3][:eu_west_1]).to eq('N/A')
     end
   end
 
@@ -83,8 +102,7 @@ RSpec.describe 'Healthcheck' do
 
     it 'reports the first status from the list for S3 us-east-1' do
       get '/healthcheck'
-      expect(dependencies[:external][:s3][:us_east_1]).
-        to eq('Service is operating normally')
+      expect(dependencies[:external][:s3][:us_east_1]).to eq('OK')
     end
   end
 end
