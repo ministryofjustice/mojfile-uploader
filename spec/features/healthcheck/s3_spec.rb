@@ -8,10 +8,16 @@ RSpec.describe 'Healthcheck' do
     )[:dependencies]
   }
 
-  # Many of the tags have been removed for brevity.
-  # It is overridden as needed.
-  let(:status_response) {
-    <<-XML
+  before do
+    allow(MojFile::Scan).to receive(:trigger_alert)
+    allow(MojFile::Scan).to receive(:clean_file)
+  end
+
+  context 'AWS status endpoint' do
+    # Many of the tags have been removed for brevity.
+    # It is overridden as needed.
+    let(:status_response) {
+      <<-XML
       <?xml version="1.0" encoding="UTF-8"?>
       <rss version="2.0">
         <channel>
@@ -26,65 +32,78 @@ RSpec.describe 'Healthcheck' do
          </item>
         </channel>
       </rss>
-    XML
-  }
-
-  before do
-    allow(MojFile::Scan).to receive(:trigger_alert)
-    allow(MojFile::Scan).to receive(:clean_file)
-  end
-
-  describe 'happy path' do
-    before do
-      stub_request(:get, "https://status.aws.amazon.com/rss/s3-eu-west-1.rss").
-        to_return(status: 200, body: status_response)
-    end
-
-    it 'reports the first status from the list for S3 eu-west-1' do
-      get '/healthcheck'
-      expect(dependencies[:external][:s3][:eu_west_1]).
-        to eq('Service is operating normally')
-    end
-  end
-
-  describe 'no info' do
-    # Many of the tags have been removed for brevity.
-    let(:status_response) {
-      <<-XML
-      <?xml version="1.0" encoding="UTF-8"?>
-      <rss version="2.0">
-        <channel>
-        </channel>
-      </rss>
       XML
     }
 
-    before do
-      stub_request(:get, "https://status.aws.amazon.com/rss/s3-eu-west-1.rss").
-        to_return(status: 200, body: status_response)
+    # Many of the tags have been removed for brevity.
+    let(:failed_response) {
+      <<-XML
+            <?xml version="1.0" encoding="UTF-8"?>
+            <rss version="2.0">
+              <channel>
+              </channel>
+            </rss>
+      XML
+    }
+
+    describe 'default region [:external][:s3][:eu_west_1]' do
+      before do
+        stub_request(:get, "https://status.aws.amazon.com/rss/s3-eu-west-1.rss").
+          to_return(status: 200, body: status_response)
+      end
+
+      describe 'if the endpoint reports that the service is working, the key' do
+        specify do
+          get '/healthcheck'
+          expect(dependencies[:external][:s3][:eu_west_1]).
+            to eq('Service is operating normally')
+        end
+      end
+
+      describe 'if the endpoint does not reply the key' do
+        before do
+          stub_request(:get, "https://status.aws.amazon.com/rss/s3-eu-west-1.rss").
+            to_return(status: 200, body: failed_response)
+        end
+
+        specify do
+          get '/healthcheck'
+          expect(dependencies[:external][:s3][:eu_west_1]).
+            to eq('N/A')
+        end
+      end
     end
 
-    it 'returns N/A' do
-      get '/healthcheck'
-      expect(dependencies[:external][:s3][:eu_west_1]).
-        to eq('N/A')
-    end
-  end
+    describe 'different region [:external][:s3][:us_east_1]' do
+      before do
+        stub_const('MojFile::S3::REGION', 'us-east-1')
+        # The stubbed constants do not propogate for some unclear reason.
+        stub_const('MojFile::S3::STATUS_RSS_ENDPOINT', 'https://status.aws.amazon.com/rss/s3-us-east-1.rss')
 
-  describe 'different regions' do
-    before do
-      stub_const('MojFile::S3::REGION', 'us-east-1')
-      # The stubbed constants do not propogate for some unclear reason.
-      stub_const('MojFile::S3::STATUS_RSS_ENDPOINT', 'https://status.aws.amazon.com/rss/s3-us-east-1.rss')
+        stub_request(:get, "https://status.aws.amazon.com/rss/s3-us-east-1.rss").
+          to_return(status: 200, body: status_response)
+      end
 
-      stub_request(:get, "https://status.aws.amazon.com/rss/s3-us-east-1.rss").
-        to_return(status: 200, body: status_response)
-    end
+      describe 'if the endpoint reports that the service is working, the key' do
+        specify do
+          get '/healthcheck'
+          expect(dependencies[:external][:s3][:us_east_1]).
+            to eq('Service is operating normally')
+        end
+      end
 
-    it 'reports the first status from the list for S3 us-east-1' do
-      get '/healthcheck'
-      expect(dependencies[:external][:s3][:us_east_1]).
-        to eq('Service is operating normally')
+      describe 'if the endpoint does not reply the key' do
+        before do
+          stub_request(:get, "https://status.aws.amazon.com/rss/s3-us-east-1.rss").
+            to_return(status: 200, body: failed_response)
+        end
+
+        specify do
+          get '/healthcheck'
+          expect(dependencies[:external][:s3][:us_east_1]).
+            to eq('N/A')
+        end
+      end
     end
   end
 end
