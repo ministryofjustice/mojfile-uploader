@@ -33,6 +33,19 @@ module MojFile
       scan.scan_clear?
     end
 
+    def self.write_test
+      # It started checking for .success? but that isn't acutually necessary as
+      # anything other than a successful call will raise an exception.
+      new(collection_ref: 'healthcheck',
+          params: {
+        'file_title' => 'Healthcheck Upload',
+        'file_filename' => 'healthcheck.docx',
+        'file_data' => 'QSBkb2N1bWVudCBib2R5' }
+         ).upload
+    rescue Aws::S3::Errors::ServiceError
+      false
+    end
+
     private
 
     def scan

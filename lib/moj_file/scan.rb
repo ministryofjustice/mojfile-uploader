@@ -8,6 +8,7 @@ module MojFile
     SCANNER_URL = ENV.fetch('SCANNER_URL', 'http://clamav-rest:8080/scan').freeze
     EICAR_TEST = 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*'
     CLEAN_TEST = 'clear test file'
+    EXPECTED_CLEAR_RESPONSE = "Everything ok : true\n".freeze
 
     attr_reader :filename, :dummy_file
 
@@ -17,15 +18,15 @@ module MojFile
     end
 
     def scan_clear?
-      post.body.match(/true/)
+      post.body.eql?(EXPECTED_CLEAR_RESPONSE)
     end
 
-    def self.trigger_alert
-      new(filename: 'eicar test', data: EICAR_TEST).scan_clear? ? 'FAILED' : 'OK'
+    def self.healthcheck_infected
+      !new(filename: 'eicar test', data: EICAR_TEST).scan_clear?
     end
 
-    def self.clean_file
-      new(filename: 'clean test', data: CLEAN_TEST).scan_clear? ? 'OK' : 'FAILED'
+    def self.healthcheck_clean
+      new(filename: 'clean test', data: CLEAN_TEST).scan_clear?
     end
 
     private
