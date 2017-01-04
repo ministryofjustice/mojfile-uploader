@@ -15,49 +15,49 @@ RSpec.describe MojFile::Scan do
   let(:resp) { instance_double(RestClient::Response, body: "Everything ok : true\n") }
   let(:infected) { instance_double(RestClient::Response, body: "Infected\n") }
 
-  describe '.clean_file' do
+  describe '.healthcheck_clean' do
     it 'sends a simple file name to aid identifying these calls in the logs' do
       expect(described_class).
         to receive(:new).
         with(hash_including(filename: 'clean test')).and_return(
           instance_double(described_class, scan_clear?: true)
         )
-      described_class.clean_file
+      described_class.healthcheck_clean
     end
 
     it 'reports OK' do
       allow(RestClient).to receive(:post).and_return(resp)
-      expect(described_class.clean_file).to eq('OK')
+      expect(described_class.healthcheck_clean).to be_truthy
     end
 
     # It always uses the same test string, so this should not fail if the
     # scanner is working correctly.
     it 'reports FAILED' do
       allow(RestClient).to receive(:post).and_return(infected)
-      expect(described_class.clean_file).to eq('FAILED')
+      expect(described_class.healthcheck_clean).to be_falsey
     end
   end
 
-  describe '.trigger_alert' do
+  describe '.healthcheck_infected' do
     it 'sends a simple file name to aid identifying these calls in the logs' do
       expect(described_class).
         to receive(:new).
         with(hash_including(filename: 'eicar test')).and_return(
           instance_double(described_class, scan_clear?: false)
         )
-      described_class.trigger_alert
+      described_class.healthcheck_infected
     end
 
-    it 'reports OK' do
+    it 'reports true' do
       allow(RestClient).to receive(:post).and_return(infected)
-      expect(described_class.trigger_alert).to eq('OK')
+      expect(described_class.healthcheck_infected).to be_truthy
     end
 
     # It always uses the same test string, so this should not fail if the
     # scanner is working correctly.
-    it 'reports FAILED' do
+    it 'reports false' do
       allow(RestClient).to receive(:post).and_return(resp)
-      expect(described_class.trigger_alert).to eq('FAILED')
+      expect(described_class.healthcheck_infected).to be_falsey
     end
   end
 

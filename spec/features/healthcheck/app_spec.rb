@@ -10,14 +10,15 @@ RSpec.describe 'Service status' do
 
   before do
     allow(MojFile::S3).to receive(:status)
-    allow(MojFile::Scan).to receive(:trigger_alert)
-    allow(MojFile::Scan).to receive(:clean_file)
+    allow(MojFile::Scan).to receive(:healthcheck_infected).and_return(true)
+    allow(MojFile::Scan).to receive(:healthcheck_clean).and_return(true)
+    stub_request(:put, /healthcheck\.docx/).to_return(status: 200)
     get '/healthcheck'
   end
 
   describe 'happy path' do
-    it 'reports that the service is OK' do
-      expect(service_status).to eq('OK')
+    it 'reports that the service is ok' do
+      expect(service_status).to eq('ok')
     end
   end
 end

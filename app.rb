@@ -12,16 +12,18 @@ module MojFile
     end
 
     get '/healthcheck' do
+      checks = healthchecks
       {
-        service_status: 'OK',
+        service_status: checks[:service_status],
         dependencies: {
           external: {
             av: {
-              detect_infection: Scan.trigger_alert,
-              pass_clean: Scan.clean_file
+              detected_infected_file: checks[:detected_infected_file],
+              passed_clean_file: checks[:passed_clean_file]
             },
             s3: {
-              S3::REGION.tr('-','_') => S3.status
+              S3::REGION.tr('-','_') => S3.status,
+              write_test: checks[:write_test]
             }
           }
         }
@@ -70,6 +72,26 @@ module MojFile
       def body_params
         JSON.parse(request.body.read)
       end
+
+      # Can't see a good way around this.
+      # rubocop:disable Metrics/CyclomaticComplexity
+      def healthchecks
+        write_test = Add.write_test
+        detect_infected = Scan.healthcheck_infected
+        clean_file = Scan.healthcheck_clean
+        service_status = if write_test && detect_infected && clean_file
+                           'ok'
+                         else
+                           'failed'
+                         end
+        {
+          service_status: service_status,
+          write_test: write_test ? 'ok' : 'failed',
+          detected_infected_file: detect_infected ? 'ok' : 'failed',
+          passed_clean_file: clean_file ? 'ok' : 'failed'
+        }
+      end
+      # rubocop:enable Metrics/CyclomaticComplexity
     end
   end
 end
