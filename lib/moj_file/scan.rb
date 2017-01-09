@@ -8,7 +8,7 @@ module MojFile
     SCANNER_URL = ENV.fetch('SCANNER_URL', 'http://clamav-rest:8080/scan').freeze
     EICAR_TEST = 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*'
     CLEAN_TEST = 'clear test file'
-    EXPECTED_CLEAR_RESPONSE = "Everything ok : true\n".freeze
+    EXPECTED_CLEAR_RESPONSE = "true\n".freeze
 
     attr_reader :filename, :dummy_file
 

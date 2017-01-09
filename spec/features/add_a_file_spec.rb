@@ -26,7 +26,7 @@ RSpec.describe MojFile::Add do
     # would remove the need for unit tests for these specific attributes.
     # However, webmock does not yet support this for multipart requests.
     stub_request(:post, "http://clamav-rest:8080/scan").
-      to_return(body: "Everything ok : true\n")
+      to_return(body: "true\n")
   }
 
   context 'successfully adding a file' do
