@@ -8,6 +8,8 @@ RSpec.describe 'Healthcheck' do
     )[:dependencies][:external][:av]
   }
 
+  let(:clean_result) { "true\n" }
+
   before do
     allow(MojFile::S3).to receive(:status)
     stub_request(:put, /healthcheck\.docx/).to_return(status: 200)
@@ -30,7 +32,7 @@ RSpec.describe 'Healthcheck' do
         expect(RestClient).
           to receive(:post).
           twice.
-          and_return(double('response', body: MojFile::Scan::EXPECTED_CLEAR_RESPONSE))
+          and_return(double('response', body: clean_result))
       end
 
       specify do
@@ -44,7 +46,7 @@ RSpec.describe 'Healthcheck' do
         expect(RestClient).
           to receive(:post).
           twice.
-          and_return(double('response', body: MojFile::Scan::EXPECTED_CLEAR_RESPONSE))
+          and_return(double('response', body: clean_result))
       end
 
       specify do

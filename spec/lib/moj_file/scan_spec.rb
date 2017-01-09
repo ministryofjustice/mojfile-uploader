@@ -12,8 +12,11 @@ RSpec.describe MojFile::Scan do
     allow(RestClient).to receive(:post)
   }
 
-  let(:resp) { instance_double(RestClient::Response, body: "Everything ok : true\n") }
-  let(:infected) { instance_double(RestClient::Response, body: "Infected\n") }
+  let(:clean_result) { "true\n" }
+  let(:infected_result) { "false\n" }
+
+  let(:resp) { instance_double(RestClient::Response, body: clean_result) }
+  let(:infected) { instance_double(RestClient::Response, body: infected_result) }
 
   describe '.healthcheck_clean' do
     it 'sends a simple file name to aid identifying these calls in the logs' do
@@ -68,7 +71,7 @@ RSpec.describe MojFile::Scan do
 
     context 'clear' do
       before do
-        expect(resp).to receive(:body).and_return("Everything ok : true\n")
+        expect(resp).to receive(:body).and_return(clean_result)
       end
 
       it 'returns true' do
@@ -81,7 +84,7 @@ RSpec.describe MojFile::Scan do
 
     context 'infected' do
       before do
-        expect(resp).to receive(:body).and_return("Everything ok : false\n")
+        expect(resp).to receive(:body).and_return(infected_result)
       end
 
       it 'returns false' do
@@ -128,7 +131,7 @@ RSpec.describe MojFile::Scan do
       end
 
       it 'captures the response body from the post' do
-        expect(resp).to receive(:body).and_return("Everything ok : true\n")
+        expect(resp).to receive(:body).and_return(clean_result)
         rest_client_called.and_return(resp)
         scan_file
       end
