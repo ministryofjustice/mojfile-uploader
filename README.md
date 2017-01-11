@@ -1,6 +1,6 @@
-# File uploader API
+# File uploader
 
-TODO: Document the API
+## Description
 
 mojfile-uploader is designed as a drop-in component that can be added to any project
 to facilitate users uploading files.
@@ -21,6 +21,70 @@ of any of the user's uploaded files. To this end;
 
 The uploader can list the uploaded files, and can delete any of them (so that the user
 can correct mistakes).
+
+## API documentation
+
+A [client gem](https://github.com/ministryofjustice/mojfile-uploader-api-client) has been published that simplifies the interaction with the uploader API.
+
+### Adding files
+
+Request. If no collection_ref route parameter is provided, a new collection will be created.
+
+```ruby
+POST to '/?:collection_ref?/new'
+with a JSON payload
+{file_title: 'title', file_filename: 'filename', file_data: 'Base64 encoded file data'}
+```
+
+Response:
+
+```ruby
+When success:
+    200 status code
+    JSON body: { collection: 'collection reference', key: 'filename' }
+  
+When virus detected:
+    400 status code
+    JSON body: { errors: ['Virus scan failed'] }
+  
+When failure:
+    422 status code
+    JSON body: { errors: ['file_title must be provided', 'file_filename must be provided', 'file_data must be provided'] }
+```
+
+### Deleting files
+
+Request:
+
+```ruby
+DELETE to '/:collection_ref/:filename'
+```
+
+Response:
+
+```ruby
+204 status code
+```
+
+### Listing files
+
+Request:
+
+```ruby
+GET to '/:collection_ref'
+```
+
+Response:
+
+```ruby
+When success:
+    200 status code
+    JSON body: { collection: '12345', files: [{ key: '12345/test.doc', title: 'test.doc', last_modified: '2016-12-05T12:20:02.000Z' }] }
+  
+When collection not found:
+    404 status code
+    JSON body: { errors: ["Collection '12345' does not exist or is empty."] }
+```
 
 ## Setup
 
