@@ -1,6 +1,6 @@
 # File uploader example app
 
-This example Sinatra app will show how to integrate the File Uploader JQuery plugin with the client gem.
+This example Sinatra app will show how to integrate the File Uploader JQuery plugin with the [client gem](https://github.com/ministryofjustice/mojfile-uploader-api-client).
 
 ## Running the app
 
