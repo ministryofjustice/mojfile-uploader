@@ -11,7 +11,7 @@ module MojFile
       set :show_exceptions, false
     end
 
-    get '/healthcheck' do
+    get '/healthcheck.?:format?' do
       checks = healthchecks
       {
         service_status: checks[:service_status],
