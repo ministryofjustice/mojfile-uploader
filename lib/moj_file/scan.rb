@@ -5,7 +5,7 @@ require 'pp'
 module MojFile
   class Scan
     # clamav-rest is remapped in docker-compose.yml
-    SCANNER_URL = ENV.fetch('SCANNER_URL', 'http://clamav-rest:8080/scan').freeze
+    DEFAULT_SCANNER_URL = 'http://clamav-rest:8080/scan'.freeze
     EICAR_TEST = 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*'
     CLEAN_TEST = 'clear test file'
 
@@ -28,10 +28,14 @@ module MojFile
       new(filename: 'clean test', data: CLEAN_TEST).scan_clear?
     end
 
+    def scanner_url
+      ENV.fetch('SCANNER_URL', DEFAULT_SCANNER_URL)
+    end
+
     private
 
     def post
-      RestClient.post(SCANNER_URL, name: filename, file: dummy_file, multipart: true)
+      RestClient.post(scanner_url, name: filename, file: dummy_file, multipart: true)
     end
   end
 end

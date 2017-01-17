@@ -3,6 +3,8 @@ require_relative '../spec_helper'
 RSpec.describe MojFile::Add do
   let(:encoded_file_data) { 'QSBkb2N1bWVudCBib2R5\n' }
   let(:decoded_file_data) { 'A document body' }
+  let(:bucket_name) { 'uploader-test-bucket' }
+  let(:scanner_url) { 'http://my-test-scanner' }
 
   let(:params) {
     {
@@ -14,6 +16,8 @@ RSpec.describe MojFile::Add do
 
   before do
     allow(SecureRandom).to receive(:uuid).and_return(12345)
+    allow(ENV).to receive(:fetch).with('BUCKET_NAME').and_return(bucket_name)
+    allow(ENV).to receive(:fetch).with('SCANNER_URL', 'http://clamav-rest:8080/scan').and_return(scanner_url)
   end
 
   let!(:s3_stub) {
@@ -25,8 +29,7 @@ RSpec.describe MojFile::Add do
     # Ideally, I would match the request body for filename and data.  This
     # would remove the need for unit tests for these specific attributes.
     # However, webmock does not yet support this for multipart requests.
-    stub_request(:post, "http://clamav-rest:8080/scan").
-      to_return(body: "true\n")
+    stub_request(:post, "http://my-test-scanner").to_return(body: "true\n")
   }
 
   context 'successfully adding a file' do

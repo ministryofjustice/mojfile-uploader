@@ -102,9 +102,14 @@ RSpec.describe MojFile::Scan do
       }
 
       let(:rest_client_called) { expect(RestClient).to receive(:post) }
+      let(:scanner_url) { 'http://my-test-scanner' }
+
+      before do
+        allow(ENV).to receive(:fetch).with('SCANNER_URL', 'http://clamav-rest:8080/scan').and_return(scanner_url)
+      end
 
       it 'is called with the correct endpoint' do
-        rest_client_called.with(MojFile::Scan::SCANNER_URL, anything).
+        rest_client_called.with('http://my-test-scanner', anything).
           and_return(resp)
         scan_file
       end
