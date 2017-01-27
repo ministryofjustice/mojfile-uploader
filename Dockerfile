@@ -5,6 +5,7 @@ ENV RACK_ENV production
 
 ENV BUCKET_NAME replace_this_at_build_time
 ENV SCANNER_URL replace_this_at_build_time
+ENV SENTRY_DSN  replace_this_at_build_time
 
 RUN touch /etc/inittab
 
