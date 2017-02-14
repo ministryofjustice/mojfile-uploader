@@ -10,7 +10,8 @@ RSpec.describe MojFile::Add do
     {
       file_title: 'Test Upload',
       file_filename: 'testfile.docx',
-      file_data: encoded_file_data
+      file_data: encoded_file_data,
+      subfolder: 'grounds_for_appeal'
     }
   }
 
@@ -21,7 +22,7 @@ RSpec.describe MojFile::Add do
   end
 
   let!(:s3_stub) {
-    stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/12345\/testfile.docx/).
+    stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/12345\/grounds_for_appeal\/testfile.docx/).
       with(body: decoded_file_data)
   }
 
@@ -65,7 +66,7 @@ RSpec.describe MojFile::Add do
 
     context 'reusing a collection_reference' do
       before do
-        stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/ABC123\/testfile.docx/)
+        stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/ABC123\/grounds_for_appeal\/testfile.docx/)
       end
 
       it 'returns a 200' do

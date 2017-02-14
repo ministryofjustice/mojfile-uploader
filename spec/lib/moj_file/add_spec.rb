@@ -8,7 +8,8 @@ RSpec.describe MojFile::Add do
     {
       'file_title' => 'Test Upload',
       'file_filename' => 'testfile.docx',
-      'file_data' => encoded_file_data
+      'file_data' => encoded_file_data,
+      'subfolder' => 'grounds_for_appeal'
     }
   }
 

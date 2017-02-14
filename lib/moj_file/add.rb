@@ -7,16 +7,18 @@ module MojFile
     extend Forwardable
 
     attr_accessor :collection,
-      :title,
-      :filename,
       :file_data,
-      :errors
+      :filename,
+      :errors,
+      :subfolder,
+      :title
 
     def initialize(collection_ref:, params:)
       @collection = collection_ref || SecureRandom.uuid
-      @title = params.fetch('file_title', '')
-      @filename = params.fetch('file_filename', '')
       @file_data = params.fetch('file_data', '')
+      @filename = params.fetch('file_filename', '')
+      @subfolder = params.fetch('subfolder', nil)
+      @title = params.fetch('file_title', '')
       @errors = []
     end
 
@@ -61,7 +63,7 @@ module MojFile
     end
 
     def object
-      s3.bucket(bucket_name).object([collection, filename].join('/'))
+      s3.bucket(bucket_name).object([collection, subfolder, filename].compact.join('/'))
     end
 
     def validate

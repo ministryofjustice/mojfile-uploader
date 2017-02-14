@@ -15,11 +15,11 @@ RSpec.describe MojFile::List do
     <Name>bucket</Name>
     <KeyCount>2</KeyCount>
     <Contents>
-        <Key>12345/solicitor.docx</Key>
+        <Key>12345/representative_approval/solicitor.docx</Key>
         <LastModified>2016-10-12T17:50:30.000Z</LastModified>
     </Contents>
     <Contents>
-        <Key>12345/hmrc_appeal.docx</Key>
+        <Key>12345/supporting_documents/hmrc_appeal.docx</Key>
         <LastModified>2016-10-12T17:50:30.000Z</LastModified>
     </Contents>
 </ListBucketResult>
@@ -31,13 +31,13 @@ RSpec.describe MojFile::List do
           collection: '12345',
           files: [
             {
-              key: '12345/solicitor.docx',
-              title: 'solicitor.docx',
+              key: '12345/representative_approval/solicitor.docx',
+              title: 'representative_approval/solicitor.docx',
               last_modified: '2016-10-12T17:50:30.000Z'
             },
             {
-              key: '12345/hmrc_appeal.docx',
-              title: 'hmrc_appeal.docx',
+              key: '12345/supporting_documents/hmrc_appeal.docx',
+              title: 'supporting_documents/hmrc_appeal.docx',
               last_modified: '2016-10-12T17:50:30.000Z'
             }
         ]
