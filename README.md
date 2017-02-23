@@ -33,7 +33,7 @@ Request. If no collection_ref route parameter is provided, a new collection will
 ```ruby
 POST to '/?:collection_ref?/new'
 with a JSON payload
-{file_title: 'title', file_filename: 'filename', file_data: 'Base64 encoded file data'}
+{file_filename: 'filename', file_data: 'Base64 encoded file data'}
 ```
 
 Response:
@@ -49,7 +49,7 @@ When virus detected:
   
 When failure:
     422 status code
-    JSON body: { errors: ['file_title must be provided', 'file_filename must be provided', 'file_data must be provided'] }
+    JSON body: { errors: ['file_filename must be provided', 'file_data must be provided'] }
 ```
 
 ### Deleting files
@@ -79,7 +79,7 @@ Response:
 ```ruby
 When success:
     200 status code
-    JSON body: { collection: '12345', files: [{ key: '12345/test.doc', title: 'test.doc', last_modified: '2016-12-05T12:20:02.000Z' }] }
+    JSON body: { collection: '12345', files: [{ key: '12345/test.doc', last_modified: '2016-12-05T12:20:02.000Z' }] }
   
 When collection not found:
     404 status code

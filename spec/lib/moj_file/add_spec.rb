@@ -6,7 +6,6 @@ RSpec.describe MojFile::Add do
 
   let(:params) {
     {
-      'file_title' => 'Test Upload',
       'file_filename' => 'testfile.docx',
       'file_data' => encoded_file_data
     }
@@ -43,7 +42,6 @@ RSpec.describe MojFile::Add do
         to receive(:new).
         with(collection_ref: 'healthcheck',
              params: {
-                      'file_title' => 'Healthcheck Upload',
                       'file_filename' => 'healthcheck.docx',
                       'file_data' => 'QSBkb2N1bWVudCBib2R5'
                      }

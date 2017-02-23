@@ -7,14 +7,12 @@ module MojFile
     extend Forwardable
 
     attr_accessor :collection,
-      :title,
       :filename,
       :file_data,
       :errors
 
     def initialize(collection_ref:, params:)
       @collection = collection_ref || SecureRandom.uuid
-      @title = params.fetch('file_title', '')
       @filename = params.fetch('file_filename', '')
       @file_data = params.fetch('file_data', '')
       @errors = []
@@ -38,7 +36,6 @@ module MojFile
       # anything other than a successful call will raise an exception.
       new(collection_ref: 'healthcheck',
           params: {
-        'file_title' => 'Healthcheck Upload',
         'file_filename' => 'healthcheck.docx',
         'file_data' => 'QSBkb2N1bWVudCBib2R5' }
          ).upload
@@ -66,11 +63,8 @@ module MojFile
 
     def validate
       errors.tap { |e|
-        e << 'file_title must be provided' if title.empty?
         e << 'file_filename must be provided' if filename.empty?
-        if file_data.empty?
-          e << 'file_data must be provided'
-        end
+        e << 'file_data must be provided' if file_data.empty?
       }
     end
   end

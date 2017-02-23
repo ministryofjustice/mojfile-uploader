@@ -30,7 +30,7 @@ list_files() {
 }
 
 upload_clean_file() {
-  data="{\"file_title\":\"Test Upload\",\"file_filename\":\"testfile.docx\",\"file_data\":\"RW5jb2RlZCBkb2N1bWVudCBib2R5\\n\"}"
+  data="{\"file_filename\":\"testfile.docx\",\"file_data\":\"RW5jb2RlZCBkb2N1bWVudCBib2R5\\n\"}"
 
   curl -X POST \
     -H "Content-Type: application/json" \
@@ -42,7 +42,7 @@ function upload_infected_file() {
   # This is the eicar virus scanning test pattern (ClamAV will recognise this as infected, but it's not)
   # NB: 4\\ should be 4\ but something is escaping this when we pass it through sinatra/ruby/something
   eicar='X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*'
-  data="{\"file_title\":\"Infected Upload\",\"file_filename\":\"testfile2.docx\",\"file_data\":\"${eicar}\n\"}"
+  data="{\"file_filename\":\"testfile2.docx\",\"file_data\":\"${eicar}\n\"}"
 
   curl -X POST \
     -H "Content-Type: application/json" \
