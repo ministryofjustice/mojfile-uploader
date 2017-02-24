@@ -8,7 +8,6 @@ RSpec.describe MojFile::Add do
 
   let(:params) {
     {
-      file_title: 'Test Upload',
       file_filename: 'testfile.docx',
       file_data: encoded_file_data
     }
@@ -50,7 +49,6 @@ RSpec.describe MojFile::Add do
       end
 
       describe 'json response body' do
-
         it 'contains the file key' do
           post '/new', params.to_json
           expect(last_response.body).to match(/\"key\":\"testfile.docx\"/)
@@ -83,12 +81,6 @@ RSpec.describe MojFile::Add do
   end
 
   context 'missing data' do
-    it 'returns a 422 if the title is missing' do
-      params.delete(:file_title)
-      post '/new', params.to_json
-      expect(last_response.status).to eq(422)
-    end
-
     it 'returns a 422 if the filename is missing' do
       params.delete(:file_filename)
       post '/new', params.to_json
@@ -102,12 +94,6 @@ RSpec.describe MojFile::Add do
     end
 
     describe 'json response body' do
-      it 'explains the title is missing' do
-        params.delete(:file_title)
-        post '/new', params.to_json
-        expect(last_response.body).to match(/\"errors\":\[\"file_title must be provided\"\]/)
-      end
-
       it 'explains the filename is missing' do
         params.delete(:file_filename)
         post '/new', params.to_json
