@@ -8,12 +8,14 @@ module MojFile
 
     attr_accessor :collection,
       :filename,
+      :folder,
       :file_data,
       :errors
 
     def initialize(collection_ref:, params:)
       @collection = collection_ref || SecureRandom.uuid
       @filename = params.fetch('file_filename', '')
+      @folder = params.fetch('folder', nil)
       @file_data = params.fetch('file_data', '')
       @errors = []
     end
@@ -58,7 +60,7 @@ module MojFile
     end
 
     def object
-      s3.bucket(bucket_name).object([collection, filename].join('/'))
+      s3.bucket(bucket_name).object([collection, folder, filename].compact.join('/'))
     end
 
     def validate

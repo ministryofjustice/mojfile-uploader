@@ -2,20 +2,41 @@ require 'spec_helper'
 
 RSpec.describe MojFile::Delete do
   context 'the file exists' do
-    let!(:s3_stub) {
-      stub_request(:delete, /uploader-test-bucket.+amazonaws\.com\/ABC123\/testfile\.docx/).
-      to_return(status: 204)
-    }
+    context 'and is in a subfolder' do
+      let!(:s3_stub) {
+        stub_request(:delete, /uploader-test-bucket.+amazonaws\.com\/ABC123\/subfolder\/testfile\.docx/).
+        to_return(status: 204)
+      }
 
-    describe '#delete' do
-      before do
-        delete '/ABC123/testfile.docx'
+      describe '#delete' do
+        before do
+          delete '/ABC123/subfolder/testfile.docx'
+        end
+
+        describe 'it deletes the file' do
+          it { expect(s3_stub).to have_been_requested }
+          # This mirrors S3's success response.
+          it { expect(last_response.status).to eq(204) }
+        end
       end
+    end
 
-      describe 'it deletes the file' do
-        it { expect(s3_stub).to have_been_requested }
-        # This mirrors S3's success response.
-        it { expect(last_response.status).to eq(204) }
+    context 'and is not in a subfolder' do
+      let!(:s3_stub) {
+        stub_request(:delete, /uploader-test-bucket.+amazonaws\.com\/ABC123\/testfile\.docx/).
+        to_return(status: 204)
+      }
+
+      describe '#delete' do
+        before do
+          delete '/ABC123/testfile.docx'
+        end
+
+        describe 'it deletes the file' do
+          it { expect(s3_stub).to have_been_requested }
+          # This mirrors S3's success response.
+          it { expect(last_response.status).to eq(204) }
+        end
       end
     end
   end

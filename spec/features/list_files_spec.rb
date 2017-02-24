@@ -7,9 +7,61 @@ RSpec.describe MojFile::List do
   }
 
   context 'happy paths' do
-    describe 'the collection has files' do
-      let(:aws_response) {
-        <<-XML
+    context 'when a subfolder is provided' do
+      describe 'the collection has files' do
+        let(:aws_response) {
+          <<-XML
+<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+    <Name>bucket</Name>
+    <KeyCount>2</KeyCount>
+    <Contents>
+        <Key>12345/subfolder/solicitor.docx</Key>
+        <LastModified>2016-10-12T17:50:30.000Z</LastModified>
+    </Contents>
+    <Contents>
+        <Key>12345/subfolder/hmrc_appeal.docx</Key>
+        <LastModified>2016-10-12T17:50:30.000Z</LastModified>
+    </Contents>
+</ListBucketResult>
+          XML
+        }
+
+        let(:expected_response) {
+          {
+            collection: '12345',
+            folder: 'subfolder',
+            files: [
+              {
+                key: '12345/subfolder/solicitor.docx',
+                title: 'solicitor.docx',
+                last_modified: '2016-10-12T17:50:30.000Z'
+              },
+              {
+                key: '12345/subfolder/hmrc_appeal.docx',
+                title: 'hmrc_appeal.docx',
+                last_modified: '2016-10-12T17:50:30.000Z'
+              }
+          ]
+          }.to_json
+        }
+
+        it 'returns a 200 ok' do
+          get '/12345/subfolder'
+          expect(last_response.status).to eq(200)
+        end
+
+        it 'returns a list of the files in a collection' do
+          get '/12345/subfolder'
+          expect(last_response.body).to eq(expected_response)
+        end
+      end
+    end
+
+    context 'when no subfolder is provided' do
+      describe 'the collection has files' do
+        let(:aws_response) {
+          <<-XML
 <?xml version="1.0" encoding="UTF-8"?>
 <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
     <Name>bucket</Name>
@@ -23,36 +75,37 @@ RSpec.describe MojFile::List do
         <LastModified>2016-10-12T17:50:30.000Z</LastModified>
     </Contents>
 </ListBucketResult>
-        XML
-      }
+          XML
+        }
 
-      let(:expected_response) {
-        {
-          collection: '12345',
-          files: [
-            {
-              key: '12345/solicitor.docx',
-              title: 'solicitor.docx',
-              last_modified: '2016-10-12T17:50:30.000Z'
-            },
-            {
-              key: '12345/hmrc_appeal.docx',
-              title: 'hmrc_appeal.docx',
-              last_modified: '2016-10-12T17:50:30.000Z'
-            }
-        ]
-        }.to_json
-      }
+        let(:expected_response) {
+          {
+            collection: '12345',
+            folder: nil,
+            files: [
+              {
+                key: '12345/solicitor.docx',
+                title: 'solicitor.docx',
+                last_modified: '2016-10-12T17:50:30.000Z'
+              },
+              {
+                key: '12345/hmrc_appeal.docx',
+                title: 'hmrc_appeal.docx',
+                last_modified: '2016-10-12T17:50:30.000Z'
+              }
+          ]
+          }.to_json
+        }
 
+        it 'returns a 200 ok' do
+          get '/12345'
+          expect(last_response.status).to eq(200)
+        end
 
-      it 'returns a 200 ok' do
-        get '/12345'
-        expect(last_response.status).to eq(200)
-      end
-
-      it 'returns a list of the files in a collection' do
-        get '/12345'
-        expect(last_response.body).to eq(expected_response)
+        it 'returns a list of the files in a collection' do
+          get '/12345'
+          expect(last_response.body).to eq(expected_response)
+        end
       end
     end
 

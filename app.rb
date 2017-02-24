@@ -33,16 +33,21 @@ module MojFile
       }.to_json
     end
 
-    get '/:collection_ref' do |collection_ref|
-      list = List.call(collection_ref)
+    get '/:collection_ref/?:folder?' do |collection_ref, folder|
+      list = List.call(collection_ref, folder: folder)
 
       if list.files?
         status(200)
         body(list.files.to_json)
       else
+        error = if folder
+                  "Collection '#{collection_ref}' and/or folder '#{folder}' does not exist or is empty."
+                else
+                  "Collection '#{collection_ref}' does not exist or is empty."
+                end
         status(404)
         body({
-          errors: ["Collection '#{collection_ref}' does not exist or is empty."]
+          errors: [error]
         }.to_json)
       end
     end
@@ -56,7 +61,7 @@ module MojFile
       if add.valid? && clear
         add.upload
         status(200)
-        body({ collection: add.collection, key: add.filename }.to_json)
+        body({ collection: add.collection, key: add.filename, folder: add.folder }.to_json)
       elsif !clear
         status(400)
         body({ errors: ['Virus scan failed'] }.to_json)
@@ -66,8 +71,8 @@ module MojFile
       end
     end
 
-    delete '/:collection_ref/:filename' do |collection_ref, filename|
-      Delete.delete!(collection: collection_ref, file: filename)
+    delete '/:collection_ref/?:folder?/:filename' do |collection_ref, folder, filename|
+      Delete.delete!(collection: collection_ref, folder: folder, file: filename)
       status(204)
     end
 
