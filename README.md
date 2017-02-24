@@ -22,18 +22,24 @@ of any of the user's uploaded files. To this end;
 The uploader can list the uploaded files, and can delete any of them (so that the user
 can correct mistakes).
 
+At the root level of the bucket, the uploader creates _collections_, which are a group
+of related files. You can add files to a collection explicitly by specifying its name,
+or implicitly have it create a new collection by leaving out the name. Underneath
+collections, the uploader optionally supports a single level of (sub)_folders_.
+
 ## API documentation
 
-A [client gem](https://github.com/ministryofjustice/mojfile-uploader-api-client) has been published that simplifies the interaction with the uploader API.
+A [client gem](https://github.com/ministryofjustice/mojfile-uploader-api-client) has
+been published that simplifies the interaction with the uploader API from Ruby apps.
 
 ### Adding files
 
-Request. If no collection_ref route parameter is provided, a new collection will be created.
+Request. If no `collection_ref` route parameter is provided, a new collection will be created.
 
 ```ruby
 POST to '/?:collection_ref?/new'
 with a JSON payload
-{file_filename: 'filename', file_data: 'Base64 encoded file data'}
+{folder: 'subfolder', file_filename: 'filename', file_data: 'Base64 encoded file data'}
 ```
 
 Response:
@@ -41,7 +47,7 @@ Response:
 ```ruby
 When success:
     200 status code
-    JSON body: { collection: 'collection reference', key: 'filename' }
+    JSON body: { collection: 'collection reference', folder: 'subfolder', key: 'filename' }
   
 When virus detected:
     400 status code
@@ -57,7 +63,7 @@ When failure:
 Request:
 
 ```ruby
-DELETE to '/:collection_ref/:filename'
+DELETE to '/:collection_ref/?:folder?/:filename'
 ```
 
 Response:
@@ -71,7 +77,7 @@ Response:
 Request:
 
 ```ruby
-GET to '/:collection_ref'
+GET to '/:collection_ref/?:folder?'
 ```
 
 Response:
@@ -79,7 +85,7 @@ Response:
 ```ruby
 When success:
     200 status code
-    JSON body: { collection: '12345', files: [{ key: '12345/test.doc', last_modified: '2016-12-05T12:20:02.000Z' }] }
+    JSON body: { collection: '12345', folder: 'subfolder', files: [{ key: '12345/subfolder/test.doc', title: 'test.doc', last_modified: '2016-12-05T12:20:02.000Z' }] }
   
 When collection not found:
     404 status code
