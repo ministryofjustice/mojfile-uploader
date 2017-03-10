@@ -21,7 +21,7 @@ module MojFile
     end
 
     def upload
-      object.put(body: decoded_file_data)
+      object.put(body: decoded_file_data, server_side_encryption: 'AES256')
     end
 
     def valid?
