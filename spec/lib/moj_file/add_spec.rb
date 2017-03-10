@@ -25,6 +25,22 @@ RSpec.describe MojFile::Add do
     end
   end
 
+  describe 'encrypting' do
+    subject(:adder) { described_class.new(collection_ref: 'foo', params: params) }
+    let(:s3_object) { double('S3', put: true) }
+
+    before do
+      stub_request(:put, "https://uploader-test-bucket.s3-eu-west-1.amazonaws.com/foo/testfile.docx")
+      # TODO: stubbing methods on the test subject is gross. We should fix this
+      allow(adder).to receive_message_chain(:s3, :bucket, :object).and_return(s3_object)
+    end
+
+    it 'set the encryption to AES256' do
+      expect(s3_object).to receive(:put).with(body: 'A document body', server_side_encryption: 'AES256')
+      adder.upload
+    end
+  end
+
   describe '.write_test' do # These are mutant kills
     it 'uploads a test file successfully' do
       stub_request(:put, /\/healthcheck\/healthcheck\.docx/).to_return(status: 200)
