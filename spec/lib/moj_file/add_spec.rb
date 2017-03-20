@@ -11,6 +11,64 @@ RSpec.describe MojFile::Add do
     }
   }
 
+  describe '#filename' do
+    let(:value) { double.as_null_object }
+
+    # Mutant kill
+    specify 'returns an empty string if not passed in' do
+      mocked_params = double.as_null_object
+      expect(mocked_params).to receive(:fetch).with('file_filename', '')
+      described_class.new(collection_ref: nil, params: mocked_params)
+    end
+
+
+    specify 'escapes html that was not otherwise removed' do
+      expect(CGI).to receive(:escapeHTML).and_return(value)
+      described_class.new(collection_ref: nil, params: params)
+    end
+
+    specify 'removes most html tags' do
+      expect(Sanitize).to receive(:fragment).with(params['file_filename'], anything).and_return(value)
+      described_class.new(collection_ref: nil, params: params)
+    end
+
+    specify 'scrubs *' do
+      allow(CGI).to receive(:escapeHTML).and_return(value)
+      expect(value).to receive(:gsub).with('*', anything)
+      described_class.new(collection_ref: nil, params: params)
+    end
+
+    specify 'scrubs =' do
+      allow(CGI).to receive(:escapeHTML).and_return(value)
+      expect(value).to receive(:gsub).with('=', anything)
+      described_class.new(collection_ref: nil, params: params)
+    end
+
+    specify 'scrubs -' do # kills SQL comments
+      allow(CGI).to receive(:escapeHTML).and_return(value)
+      expect(value).to receive(:gsub).with('-', anything)
+      described_class.new(collection_ref: nil, params: params)
+    end
+
+    specify 'scrubs %' do
+      allow(CGI).to receive(:escapeHTML).and_return(value)
+      expect(value).to receive(:gsub).with('%', anything)
+      described_class.new(collection_ref: nil, params: params)
+    end
+
+    specify 'removes `drop table` case-insensitively'do
+      allow(CGI).to receive(:escapeHTML).and_return(value)
+      expect(value).to receive(:gsub).with(/drop\s+table/i, anything)
+      described_class.new(collection_ref: nil, params: params)
+    end
+
+    specify 'removes `insert into` case-insensitively'do
+      allow(CGI).to receive(:escapeHTML).and_return(value)
+      expect(value).to receive(:gsub).with(/insert\s+into/i, anything)
+      described_class.new(collection_ref: nil, params: params)
+    end
+  end
+
   describe '#scan_clear?' do
     before do
       scan = instance_double(MojFile::Scan)
@@ -58,9 +116,9 @@ RSpec.describe MojFile::Add do
         to receive(:new).
         with(collection_ref: 'healthcheck',
              params: {
-                      'file_filename' => 'healthcheck.docx',
-                      'file_data' => 'QSBkb2N1bWVudCBib2R5'
-                     }
+        'file_filename' => 'healthcheck.docx',
+        'file_data' => 'QSBkb2N1bWVudCBib2R5'
+      }
             ).and_return(instance_double(MojFile::Add, upload: response))
       described_class.write_test
     end

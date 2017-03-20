@@ -1,5 +1,6 @@
 require 'securerandom'
 require 'base64'
+require 'sanitize'
 
 module MojFile
   class Add
@@ -14,7 +15,9 @@ module MojFile
 
     def initialize(collection_ref:, params:)
       @collection = collection_ref || SecureRandom.uuid
-      @filename = params.fetch('file_filename', '')
+      # The nils and blank strings are necessary to ensure that `app#new`
+      # raises the correct errors on validation.
+      @filename = sanitize(params.fetch('file_filename', ''))
       @folder = params.fetch('folder', nil)
       @file_data = params.fetch('file_data', '')
       @errors = []
@@ -46,6 +49,17 @@ module MojFile
     end
 
     private
+
+    def sanitize(value)
+      CGI.escapeHTML(
+        Sanitize.fragment(value, Sanitize::Config::RESTRICTED)
+      ).gsub('*', '&#42;').
+      gsub('=', '&#61;').
+      gsub('-', '&dash;').
+      gsub('%', '&#37;').
+      gsub(/drop\s+table/i, '').
+      gsub(/insert\s+into/i, '')
+    end
 
     def scan
       Scan.new(filename: filename, data: decoded_file_data)
