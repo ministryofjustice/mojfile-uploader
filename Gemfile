@@ -10,6 +10,7 @@ gem 'pry'
 gem 'puma'
 gem 'rake'
 gem 'rest-client'
+gem 'sanitize'
 gem 'sinatra'
 
 group :development, :test do
