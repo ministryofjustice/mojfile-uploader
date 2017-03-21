@@ -2,11 +2,6 @@ require 'spec_helper'
 
 # These may be blank, or the cause of an error, but they still get logged.
 RSpec.shared_examples 'common logging actions' do |log_level|
-  it 'logs the timestamp' do
-    expect(logger).to receive(log_level).with(hash_including(timestamp: Time.parse('2017-03-20 00:00:00')))
-    subject.upload
-  end
-
   it 'logs the filename' do
     expect(logger).to receive(log_level).with(hash_including(filename: 'ABC123/some_folder/testfile.docx'))
     subject.upload
@@ -71,7 +66,6 @@ RSpec.describe MojFile::Add, '#upload' do
 
     context 'success' do
       before do
-        allow(Time).to receive(:now).and_return(Time.parse('2017-03-20 00:00:00'))
         allow(s3_response).to receive(:put).and_return(true)
         allow(subject).to receive(:object).and_return(s3_response)
       end
@@ -91,7 +85,6 @@ RSpec.describe MojFile::Add, '#upload' do
 
     context 'errors' do
       before do
-        allow(Time).to receive(:now).and_return(Time.parse('2017-03-20 00:00:00'))
         allow(SecureRandom).to receive(:uuid).and_return('ABC123')
         allow(subject).to receive(:object).and_raise(StandardError)
       end

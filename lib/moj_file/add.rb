@@ -57,8 +57,7 @@ module MojFile
 
     def log_result(params)
       params.merge!(
-        { timestamp: Time.now,
-          filename: [collection, folder, filename].join('/'),
+        { filename: [collection, folder, filename].join('/'),
           filesize: file_data.size }
       )
       params.fetch(:success) ? logger.info(params) : logger.error(params)
