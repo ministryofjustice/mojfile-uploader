@@ -8,12 +8,13 @@ module MojFile
     extend Forwardable
 
     attr_accessor :collection,
+      :errors,
+      :file_data,
       :filename,
       :folder,
-      :file_data,
-      :errors
+      :logger
 
-    def initialize(collection_ref:, params:)
+    def initialize(collection_ref:, params:, logger: DummyLogger.new)
       @collection = collection_ref || SecureRandom.uuid
       # The nils and blank strings are necessary to ensure that `app#new`
       # raises the correct errors on validation.
@@ -21,10 +22,14 @@ module MojFile
       @folder = params.fetch('folder', nil)
       @file_data = params.fetch('file_data', '')
       @errors = []
+      @logger = logger
     end
 
     def upload
-      object.put(body: decoded_file_data, server_side_encryption: 'AES256')
+      object.put(body: decoded_file_data, server_side_encryption: 'AES256').tap { log_result }
+    rescue => error
+      log_result(error: error.message, backtrace: error.backtrace)
+      false
     end
 
     def valid?
@@ -37,18 +42,23 @@ module MojFile
     end
 
     def self.write_test
-      # It started checking for .success? but that isn't acutually necessary as
-      # anything other than a successful call will raise an exception.
+      # Errors get trapped and logged in `#upload`
       new(collection_ref: 'healthcheck',
           params: {
         'file_filename' => 'healthcheck.docx',
         'file_data' => 'QSBkb2N1bWVudCBib2R5' }
          ).upload
-    rescue Aws::S3::Errors::ServiceError
-      false
     end
 
     private
+
+    def log_result(params = {})
+      params.merge!(
+        { filename: [collection, folder, filename].join('/'),
+          filesize: file_data.size }
+      )
+      params.fetch(:error, nil) ? logger.error(params) : logger.info(params)
+    end
 
     def sanitize(value)
       CGI.escapeHTML(

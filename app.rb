@@ -4,6 +4,17 @@ require 'logstash-logger'
 require_relative 'lib/moj_file'
 require 'pry'
 
+module LogStashLogger
+  module Formatter
+    class PrettyJson < Base
+      def call(severity, time, progname, message)
+        super
+        "#{JSON.pretty_generate(@event)}\n"
+      end
+    end
+  end
+end
+
 module MojFile
   class Uploader < Sinatra::Base
     configure do
@@ -54,7 +65,8 @@ module MojFile
 
     post '/?:collection_ref?/new' do |collection_ref|
       add = Add.new(collection_ref: collection_ref,
-                    params: body_params)
+                    params: body_params,
+                    logger: logger)
 
       clear = add.scan_clear?
 
@@ -77,6 +89,20 @@ module MojFile
     end
 
     helpers do
+      def logger
+        @logger ||= LogStashLogger.new(logger_config)
+      end
+
+      def logger_config
+        env = ENV['RACK_ENV']
+        defaults = { formatter: LogStashLogger::Formatter::PrettyJson }
+        if env == 'production'
+          defaults.merge!(type: :stdout)
+        else
+          defaults.merge!({ type: :file, path: "log/#{env}.log", sync: true })
+        end
+      end
+
       def body_params
         JSON.parse(request.body.read)
       end
