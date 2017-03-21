@@ -75,11 +75,6 @@ RSpec.describe MojFile::Add, '#upload' do
         subject.upload
       end
 
-      it 'logs success' do
-        expect(logger).to receive(:info).with(hash_including(success: true))
-        subject.upload
-      end
-
       include_examples 'common logging actions', :info
     end
 
@@ -91,11 +86,6 @@ RSpec.describe MojFile::Add, '#upload' do
 
       it 'logs at error level' do
         expect(logger).to receive(:error)
-        subject.upload
-      end
-
-      it 'logs failure' do
-        expect(logger).to receive(:error).with(hash_including(success: false))
         subject.upload
       end
 

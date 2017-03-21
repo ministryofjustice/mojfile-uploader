@@ -26,13 +26,10 @@ module MojFile
     end
 
     def upload
-      @put = { success: true }
-      object.put(body: decoded_file_data, server_side_encryption: 'AES256')
+      object.put(body: decoded_file_data, server_side_encryption: 'AES256').tap { log_result }
     rescue => error
-      @put = { success: false, error: error.to_s }
+      log_result(error: error.to_s)
       false
-    ensure
-      log_result(@put)
     end
 
     def valid?
@@ -55,12 +52,12 @@ module MojFile
 
     private
 
-    def log_result(params)
+    def log_result(params = {})
       params.merge!(
         { filename: [collection, folder, filename].join('/'),
           filesize: file_data.size }
       )
-      params.fetch(:success) ? logger.info(params) : logger.error(params)
+      params.fetch(:error, nil) ? logger.error(params) : logger.info(params)
     end
 
     def sanitize(value)
