@@ -54,7 +54,8 @@ module MojFile
 
     post '/?:collection_ref?/new' do |collection_ref|
       add = Add.new(collection_ref: collection_ref,
-                    params: body_params)
+                    params: body_params,
+                    logger: logger)
 
       clear = add.scan_clear?
 
@@ -77,6 +78,19 @@ module MojFile
     end
 
     helpers do
+      def logger
+        @logger ||= LogStashLogger.new(logger_config)
+      end
+
+      def logger_config
+        env = ENV['RACK_ENV']
+        if env == 'production'
+          { type: :stdout }
+        else
+          { type: :file, path: "log/#{env}.log", sync: true }
+        end
+      end
+
       def body_params
         JSON.parse(request.body.read)
       end

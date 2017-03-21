@@ -7,6 +7,7 @@ RSpec.describe MojFile::Add do
   let(:params) {
     {
       'file_filename' => 'testfile.docx',
+      'folder' => 'some_folder',
       'file_data' => encoded_file_data
     }
   }
@@ -20,7 +21,6 @@ RSpec.describe MojFile::Add do
       expect(mocked_params).to receive(:fetch).with('file_filename', '')
       described_class.new(collection_ref: nil, params: mocked_params)
     end
-
 
     specify 'escapes html that was not otherwise removed' do
       expect(CGI).to receive(:escapeHTML).and_return(value)
