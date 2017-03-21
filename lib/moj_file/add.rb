@@ -28,7 +28,7 @@ module MojFile
     def upload
       object.put(body: decoded_file_data, server_side_encryption: 'AES256').tap { log_result }
     rescue => error
-      log_result(error: error.to_s)
+      log_result(error: error.message, backtrace: error.backtrace)
       false
     end
 

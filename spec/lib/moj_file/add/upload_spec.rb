@@ -89,8 +89,13 @@ RSpec.describe MojFile::Add, '#upload' do
         subject.upload
       end
 
-      it 'logs the error' do
+      it 'logs the error message' do
         expect(logger).to receive(:error).with(hash_including(error: 'StandardError'))
+        subject.upload
+      end
+
+      it 'logs the backtrace' do
+        expect(logger).to receive(:error).with(hash_including(backtrace: an_instance_of(Array)))
         subject.upload
       end
 
