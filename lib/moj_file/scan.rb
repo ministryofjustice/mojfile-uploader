@@ -20,11 +20,11 @@ module MojFile
       post.body.match(/true/)
     end
 
-    def self.healthcheck_infected
+    def self.statuscheck_infected
       !new(filename: 'eicar test', data: EICAR_TEST).scan_clear?
     end
 
-    def self.healthcheck_clean
+    def self.statuscheck_clean
       new(filename: 'clean test', data: CLEAN_TEST).scan_clear?
     end
 

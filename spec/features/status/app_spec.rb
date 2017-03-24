@@ -10,10 +10,10 @@ RSpec.describe 'Service status' do
 
   before do
     allow(MojFile::S3).to receive(:status)
-    allow(MojFile::Scan).to receive(:healthcheck_infected).and_return(true)
-    allow(MojFile::Scan).to receive(:healthcheck_clean).and_return(true)
-    stub_request(:put, /healthcheck\.docx/).to_return(status: 200)
-    get '/healthcheck'
+    allow(MojFile::Scan).to receive(:statuscheck_infected).and_return(true)
+    allow(MojFile::Scan).to receive(:statuscheck_clean).and_return(true)
+    stub_request(:put, /status\.docx/).to_return(status: 200)
+    get '/status'
   end
 
   describe 'happy path' do

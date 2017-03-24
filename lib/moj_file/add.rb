@@ -43,9 +43,9 @@ module MojFile
 
     def self.write_test
       # Errors get trapped and logged in `#upload`
-      new(collection_ref: 'healthcheck',
+      new(collection_ref: 'status',
           params: {
-        'file_filename' => 'healthcheck.docx',
+        'file_filename' => 'status.docx',
         'file_data' => 'QSBkb2N1bWVudCBib2R5' }
          ).upload
     end
