@@ -22,8 +22,8 @@ module MojFile
       set :show_exceptions, false
     end
 
-    get '/healthcheck.?:format?' do
-      checks = healthchecks
+    get '/status.?:format?' do
+      checks = statuschecks
       {
         service_status: checks[:service_status],
         dependencies: {
@@ -109,10 +109,10 @@ module MojFile
 
       # Can't see a good way around this.
       # rubocop:disable Metrics/CyclomaticComplexity
-      def healthchecks
+      def statuschecks
         write_test = Add.write_test
-        detect_infected = Scan.healthcheck_infected
-        clean_file = Scan.healthcheck_clean
+        detect_infected = Scan.statuscheck_infected
+        clean_file = Scan.statuscheck_clean
         service_status = if write_test && detect_infected && clean_file
                            'ok'
                          else

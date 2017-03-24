@@ -1,6 +1,6 @@
 require_relative '../../spec_helper'
 
-RSpec.describe 'Healthcheck' do
+RSpec.describe 'Status' do
   let(:av) {
     JSON.parse(
       last_response.body,
@@ -12,7 +12,7 @@ RSpec.describe 'Healthcheck' do
 
   before do
     allow(MojFile::S3).to receive(:status)
-    stub_request(:put, /healthcheck\.docx/).to_return(status: 200)
+    stub_request(:put, /status\.docx/).to_return(status: 200)
   end
 
   describe 'happy path' do
@@ -22,7 +22,7 @@ RSpec.describe 'Healthcheck' do
       end
 
       specify do
-        get '/healthcheck'
+        get '/status'
         expect(av[:detected_infected_file]).to eq('ok')
       end
     end
@@ -36,7 +36,7 @@ RSpec.describe 'Healthcheck' do
       end
 
       specify do
-        get '/healthcheck'
+        get '/status'
         expect(av[:detected_infected_file]).to eq('failed')
       end
     end
@@ -50,7 +50,7 @@ RSpec.describe 'Healthcheck' do
       end
 
       specify do
-        get '/healthcheck'
+        get '/status'
         expect(av[:passed_clean_file]).to eq('ok')
       end
     end
@@ -64,7 +64,7 @@ RSpec.describe 'Healthcheck' do
       end
 
       specify do
-        get '/healthcheck'
+        get '/status'
         expect(av[:passed_clean_file]).to eq('failed')
       end
     end

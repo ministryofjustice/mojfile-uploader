@@ -101,12 +101,12 @@ RSpec.describe MojFile::Add do
 
   describe '.write_test' do # These are mutant kills
     it 'uploads a test file successfully' do
-      stub_request(:put, /\/healthcheck\/healthcheck\.docx/).to_return(status: 200)
+      stub_request(:put, /\/status\/status\.docx/).to_return(status: 200)
       expect(described_class.write_test).to be_truthy
     end
 
     it 'fails to upload a test file' do
-      stub_request(:put, /\/healthcheck\/healthcheck\.docx/).to_return(status: 422)
+      stub_request(:put, /\/status\/status\.docx/).to_return(status: 422)
       expect(described_class.write_test).to be(false)
     end
 
@@ -114,9 +114,9 @@ RSpec.describe MojFile::Add do
       response = double(:response, successful?: true)
       expect(described_class).
         to receive(:new).
-        with(collection_ref: 'healthcheck',
+        with(collection_ref: 'status',
              params: {
-        'file_filename' => 'healthcheck.docx',
+        'file_filename' => 'status.docx',
         'file_data' => 'QSBkb2N1bWVudCBib2R5'
       }
             ).and_return(instance_double(MojFile::Add, upload: response))

@@ -1,6 +1,6 @@
 require_relative '../../spec_helper'
 
-RSpec.describe 'Healthcheck' do
+RSpec.describe 'Status' do
   let(:parsed_response) {
     JSON.parse(
       last_response.body,
@@ -13,14 +13,14 @@ RSpec.describe 'Healthcheck' do
   }
 
   before do
-    allow(MojFile::Scan).to receive(:healthcheck_infected)
-    allow(MojFile::Scan).to receive(:healthcheck_clean)
+    allow(MojFile::Scan).to receive(:statuscheck_infected)
+    allow(MojFile::Scan).to receive(:statuscheck_clean)
   end
 
   context 'Successful write test' do
     let(:decoded_file_data) { 'A document body' }
     let!(:write_stub) {
-      stub_request(:put, /healthcheck\.docx/).
+      stub_request(:put, /status\.docx/).
       with(body: decoded_file_data).
       to_return(status: 200)
     }
@@ -31,7 +31,7 @@ RSpec.describe 'Healthcheck' do
 
     describe '[:external][:s3][:write_test]' do
       specify do
-        get '/healthcheck'
+        get '/status'
         expect(s3_subkey[:write_test]).to eq('ok')
       end
     end
@@ -39,12 +39,12 @@ RSpec.describe 'Healthcheck' do
     describe '[:service_status]' do
       before do
         allow(MojFile::S3).to receive(:status)
-        allow(MojFile::Scan).to receive(:healthcheck_infected).and_return(true)
-        allow(MojFile::Scan).to receive(:healthcheck_clean).and_return(true)
+        allow(MojFile::Scan).to receive(:statuscheck_infected).and_return(true)
+        allow(MojFile::Scan).to receive(:statuscheck_clean).and_return(true)
       end
 
       specify do
-        get '/healthcheck'
+        get '/status'
         expect(parsed_response[:service_status]).to eq('ok')
       end
     end
@@ -53,7 +53,7 @@ RSpec.describe 'Healthcheck' do
   context 'Failed write test' do
     let(:decoded_file_data) { 'A document body' }
     let!(:write_stub) {
-      stub_request(:put, /healthcheck\.docx/).
+      stub_request(:put, /status\.docx/).
       with(body: decoded_file_data).
       to_return(status: 422)
     }
@@ -64,14 +64,14 @@ RSpec.describe 'Healthcheck' do
 
     describe '[:external][:s3][:write_test]' do
       specify do
-        get '/healthcheck'
+        get '/status'
         expect(s3_subkey[:write_test]).to eq('failed')
       end
     end
 
     describe '[:service_status]' do
       specify do
-        get '/healthcheck'
+        get '/status'
         expect(parsed_response[:service_status]).to eq('failed')
       end
     end
@@ -111,7 +111,7 @@ RSpec.describe 'Healthcheck' do
     }
 
     before do
-      stub_request(:put, /healthcheck\.docx/).to_return(status: 200)
+      stub_request(:put, /status\.docx/).to_return(status: 200)
     end
 
     describe 'default region [:external][:s3][:eu_west_1]' do
@@ -122,7 +122,7 @@ RSpec.describe 'Healthcheck' do
 
       describe 'if the endpoint reports that the service is working, the key' do
         specify do
-          get '/healthcheck'
+          get '/status'
           expect(s3_subkey[:eu_west_1]).
             to eq('Service is operating normally')
         end
@@ -135,7 +135,7 @@ RSpec.describe 'Healthcheck' do
         end
 
         specify do
-          get '/healthcheck'
+          get '/status'
           expect(s3_subkey[:eu_west_1]).to eq('N/A')
         end
       end
@@ -153,7 +153,7 @@ RSpec.describe 'Healthcheck' do
 
       describe 'if the endpoint reports that the service is working, the key' do
         specify do
-          get '/healthcheck'
+          get '/status'
           expect(s3_subkey[:us_east_1]).
             to eq('Service is operating normally')
         end
@@ -166,7 +166,7 @@ RSpec.describe 'Healthcheck' do
         end
 
         specify do
-          get '/healthcheck'
+          get '/status'
           expect(s3_subkey[:us_east_1]).to eq('N/A')
         end
       end

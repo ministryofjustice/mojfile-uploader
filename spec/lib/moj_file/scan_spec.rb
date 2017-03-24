@@ -18,49 +18,49 @@ RSpec.describe MojFile::Scan do
   let(:resp) { instance_double(RestClient::Response, body: clean_result) }
   let(:infected) { instance_double(RestClient::Response, body: infected_result) }
 
-  describe '.healthcheck_clean' do
+  describe '.statuscheck_clean' do
     it 'sends a simple file name to aid identifying these calls in the logs' do
       expect(described_class).
         to receive(:new).
         with(hash_including(filename: 'clean test')).and_return(
           instance_double(described_class, scan_clear?: true)
         )
-      described_class.healthcheck_clean
+      described_class.statuscheck_clean
     end
 
     it 'reports OK' do
       allow(RestClient).to receive(:post).and_return(resp)
-      expect(described_class.healthcheck_clean).to be_truthy
+      expect(described_class.statuscheck_clean).to be_truthy
     end
 
     # It always uses the same test string, so this should not fail if the
     # scanner is working correctly.
     it 'reports FAILED' do
       allow(RestClient).to receive(:post).and_return(infected)
-      expect(described_class.healthcheck_clean).to be_falsey
+      expect(described_class.statuscheck_clean).to be_falsey
     end
   end
 
-  describe '.healthcheck_infected' do
+  describe '.statuscheck_infected' do
     it 'sends a simple file name to aid identifying these calls in the logs' do
       expect(described_class).
         to receive(:new).
         with(hash_including(filename: 'eicar test')).and_return(
           instance_double(described_class, scan_clear?: false)
         )
-      described_class.healthcheck_infected
+      described_class.statuscheck_infected
     end
 
     it 'reports true' do
       allow(RestClient).to receive(:post).and_return(infected)
-      expect(described_class.healthcheck_infected).to be_truthy
+      expect(described_class.statuscheck_infected).to be_truthy
     end
 
     # It always uses the same test string, so this should not fail if the
     # scanner is working correctly.
     it 'reports false' do
       allow(RestClient).to receive(:post).and_return(resp)
-      expect(described_class.healthcheck_infected).to be_falsey
+      expect(described_class.statuscheck_infected).to be_falsey
     end
   end
 

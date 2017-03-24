@@ -30,7 +30,7 @@ RSpec.describe MojFile::S3 do
     end
   end
 
-  # These are mutant-kills. See features/healthcheck_spec_s3.rb for operational examples.
+  # These are mutant-kills. See features/status_spec_s3.rb for operational examples.
   describe '.status' do
     let(:status_response) {
       <<-XML
