@@ -11,6 +11,7 @@ gem 'puma'
 gem 'rake'
 gem 'rest-client'
 gem 'sanitize'
+gem 'sentry-raven'
 gem 'sinatra'
 
 group :development, :test do
