@@ -39,6 +39,8 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.1.1)
     equalizer (0.0.11)
+    faraday (0.11.0)
+      multipart-post (>= 1.2, < 3)
     fuubar (2.2.0)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
@@ -67,6 +69,7 @@ GEM
       equalizer (~> 0.0.9)
       ice_nine (~> 0.11.0)
       procto (~> 0.0.2)
+    multipart-post (2.0.0)
     mutant (0.8.11)
       abstract_type (~> 0.0.7)
       adamantium (~> 0.2.0)
@@ -145,6 +148,8 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.4.4)
       nokogumbo (~> 1.4.1)
+    sentry-raven (2.3.0)
+      faraday (>= 0.7.6, < 1.0)
     simplecov (0.12.0)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
@@ -198,6 +203,7 @@ DEPENDENCIES
   rubocop
   rubocop-rspec
   sanitize
+  sentry-raven
   simplecov
   sinatra
   webmock

@@ -18,8 +18,7 @@ end
 module MojFile
   class Uploader < Sinatra::Base
     configure do
-      set :raise_errors, true
-      set :show_exceptions, false
+      set :raise_errors, false
     end
 
     get '/status.?:format?' do
