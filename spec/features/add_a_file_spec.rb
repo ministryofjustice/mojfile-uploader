@@ -8,7 +8,7 @@ RSpec.describe MojFile::Add do
 
   let(:params) {
     {
-      file_title: 'Test Upload',
+      folder: 'subfolder',
       file_filename: 'testfile.docx',
       file_data: encoded_file_data
     }
@@ -21,7 +21,7 @@ RSpec.describe MojFile::Add do
   end
 
   let!(:s3_stub) {
-    stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/12345\/testfile.docx/).
+    stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/12345\/subfolder\/testfile.docx/).
       with(body: decoded_file_data)
   }
 
@@ -50,7 +50,6 @@ RSpec.describe MojFile::Add do
       end
 
       describe 'json response body' do
-
         it 'contains the file key' do
           post '/new', params.to_json
           expect(last_response.body).to match(/\"key\":\"testfile.docx\"/)
@@ -60,12 +59,37 @@ RSpec.describe MojFile::Add do
           post '/new', params.to_json
           expect(last_response.body).to match(/\"collection\":12345/)
         end
+
+        it 'contains the folder name' do
+          post '/new', params.to_json
+          expect(last_response.body).to match(/\"folder\":\"subfolder\"/)
+        end
+      end
+    end
+
+    context 'without a folder' do
+      before do
+        stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/ABC123\/testfile.docx/)
+      end
+
+      let(:params) { super().merge('folder' => nil) }
+
+      it 'returns a 200' do
+        post '/ABC123/new', params.to_json
+        expect(last_response.status).to eq(200)
+      end
+
+      describe 'json response body' do
+        it 'contains the folder as null' do
+          post '/ABC123/new', params.to_json
+          expect(last_response.body).to match(/\"folder\":null/)
+        end
       end
     end
 
     context 'reusing a collection_reference' do
       before do
-        stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/ABC123\/testfile.docx/)
+        stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/ABC123\/subfolder\/testfile.docx/)
       end
 
       it 'returns a 200' do
@@ -83,12 +107,6 @@ RSpec.describe MojFile::Add do
   end
 
   context 'missing data' do
-    it 'returns a 422 if the title is missing' do
-      params.delete(:file_title)
-      post '/new', params.to_json
-      expect(last_response.status).to eq(422)
-    end
-
     it 'returns a 422 if the filename is missing' do
       params.delete(:file_filename)
       post '/new', params.to_json
@@ -102,12 +120,6 @@ RSpec.describe MojFile::Add do
     end
 
     describe 'json response body' do
-      it 'explains the title is missing' do
-        params.delete(:file_title)
-        post '/new', params.to_json
-        expect(last_response.body).to match(/\"errors\":\[\"file_title must be provided\"\]/)
-      end
-
       it 'explains the filename is missing' do
         params.delete(:file_filename)
         post '/new', params.to_json

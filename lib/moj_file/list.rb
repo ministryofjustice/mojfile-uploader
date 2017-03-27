@@ -2,19 +2,21 @@ module MojFile
   class List
     include MojFile::S3
 
-    attr_accessor :collection
+    attr_accessor :collection, :folder
 
     def self.call(*args)
       new(*args)
     end
 
-    def initialize(collection_ref)
+    def initialize(collection_ref, folder:)
       @collection = collection_ref
+      @folder = folder
     end
 
     def files
       {
         collection: collection,
+        folder: folder,
         files: map_files
       }
     end
@@ -36,7 +38,7 @@ module MojFile
     end
 
     def prefix
-      "#{collection}/"
+      [collection, folder].compact.join('/') + '/'
     end
 
     def bucket_name

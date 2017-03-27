@@ -3,14 +3,16 @@ module MojFile
     include MojFile::S3
 
     attr_accessor :collection,
+      :folder,
       :file
 
     def self.delete!(*args)
       new(*args).delete!
     end
 
-    def initialize(collection:, file:)
+    def initialize(collection:, folder:, file:)
       @collection = collection
+      @folder = folder
       @file = file
     end
 
@@ -25,7 +27,7 @@ module MojFile
     end
 
     def object
-      s3.bucket(bucket_name).object([collection, file].join('/'))
+      s3.bucket(bucket_name).object([collection, folder, file].compact.join('/'))
     end
   end
 end

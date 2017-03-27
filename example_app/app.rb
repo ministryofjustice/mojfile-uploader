@@ -24,7 +24,7 @@ module MojFileUploadExample
       end
 
       def file_args
-        {collection_ref: collection_ref, title: file[:name], filename: file[:filename], data: file_data}
+        {collection_ref: collection_ref, filename: file[:filename], data: file_data}
       end
 
       def log(msg)
