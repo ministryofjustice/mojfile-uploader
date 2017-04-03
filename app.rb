@@ -83,7 +83,10 @@ module MojFile
     end
 
     delete '/:collection_ref/?:folder?/:filename' do |collection_ref, folder, filename|
-      Delete.delete!(collection: collection_ref, folder: folder, file: filename)
+      Delete.delete!(collection: collection_ref,
+                     folder: folder,
+                     filename: filename,
+                     logger: logger)
       status(204)
     end
 

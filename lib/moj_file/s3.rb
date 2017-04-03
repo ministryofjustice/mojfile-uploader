@@ -16,5 +16,19 @@ module MojFile
 		rescue NoMethodError
 			'N/A'
     end
+
+    def object
+      s3.bucket(bucket_name).object(object_name)
+    end
+
+    private
+
+    def bucket_name
+      ENV.fetch('BUCKET_NAME')
+    end
+
+    def object_name
+      [collection, folder, filename].compact.join('/')
+    end
   end
 end
