@@ -15,7 +15,8 @@ module MojFile
       :file_data,
       :filename,
       :folder,
-      :logger
+      :logger,
+      :scanner
 
     def initialize(collection_ref:, params:, logger: DummyLogger.new)
       @collection = collection_ref || SecureRandom.uuid
@@ -26,6 +27,7 @@ module MojFile
       @file_data = params.fetch('file_data', '')
       @errors = []
       @logger = logger
+      @scanner = params.fetch('scanner', Scan)
     end
 
     def upload
@@ -41,7 +43,12 @@ module MojFile
     end
 
     def scan_clear?
-      scan.scan_clear?
+      # This is not done with `.fetch` as that interferes with stubbing in the
+      # feature specs. 'DO_NOT_SCAN' is used in to keep the uploader from
+      # breaking in the Heroku demo environment, which cannot run/access the
+      # virus scanning container.
+      return true if ENV['DO_NOT_SCAN']
+      scanner.new(filename: filename, data: decoded_file_data).scan_clear?
     end
 
     def self.write_test
@@ -74,10 +81,6 @@ module MojFile
       gsub('%', '&#37;').
       gsub(/drop\s+table/i, '').
       gsub(/insert\s+into/i, '')
-    end
-
-    def scan
-      Scan.new(filename: filename, data: decoded_file_data)
     end
 
     def decoded_file_data
