@@ -5,7 +5,10 @@ require 'sanitize'
 module MojFile
   class Add
     include MojFile::S3
+    include MojFile::Logging
     extend Forwardable
+
+    ACTION_NAME = 'Add'
 
     attr_accessor :collection,
       :errors,
@@ -54,10 +57,12 @@ module MojFile
 
     def log_result(params = {})
       params.merge!(
-        { filename: [collection, folder, filename].join('/'),
-          filesize: file_data.size }
+        {
+          filename: object_name,
+          filesize: file_data.size
+        }
       )
-      params.fetch(:error, nil) ? logger.error(params) : logger.info(params)
+      super
     end
 
     def sanitize(value)
@@ -77,14 +82,6 @@ module MojFile
 
     def decoded_file_data
       Base64.decode64(file_data)
-    end
-
-    def bucket_name
-      ENV.fetch('BUCKET_NAME')
-    end
-
-    def object
-      s3.bucket(bucket_name).object([collection, folder, filename].compact.join('/'))
     end
 
     def validate

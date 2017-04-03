@@ -2,6 +2,11 @@ require 'spec_helper'
 
 # These may be blank, or the cause of an error, but they still get logged.
 RSpec.shared_examples 'common logging actions' do |log_level|
+  it 'logs the action' do
+    expect(logger).to receive(log_level).with(hash_including(action: 'Add'))
+    subject.upload
+  end
+
   it 'logs the filename' do
     expect(logger).to receive(log_level).with(hash_including(filename: 'ABC123/some_folder/testfile.docx'))
     subject.upload

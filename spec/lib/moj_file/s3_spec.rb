@@ -23,10 +23,53 @@ RSpec.describe MojFile::S3 do
   end
 
   describe '#s3' do
-
     it 'sets up an AWS::S3::Resource with the correct region' do
       expect(Aws::S3::Resource).to receive(:new).with(region: 'eu-west-1')
       object.new.s3
+    end
+  end
+
+  describe '#object' do
+    let(:s3_bucket) { double('Bucket', object: 'whatever') }
+    subject { object.new }
+
+    before do
+      expect(ENV).to receive(:fetch).with('BUCKET_NAME').and_return('bucket-name')
+      allow(subject).to receive_message_chain(:s3, :bucket).and_return(s3_bucket)
+    end
+
+    context 'retrieving objects from a folder' do
+      let(:object) {
+        Class.new do
+          include MojFile::S3
+
+          def collection; 'collection'; end
+          def folder; 'folder'; end
+          def filename; 'test.doc'; end
+        end
+      }
+
+      it 'should retrieve the s3 object from the correct bucket' do
+        expect(s3_bucket).to receive(:object).with('collection/folder/test.doc')
+        subject.object
+      end
+    end
+
+    context 'retrieving objects when no folder provided' do
+      let(:object) {
+        Class.new do
+          include MojFile::S3
+
+          def collection; 'collection'; end
+          def folder; nil; end
+          def filename; 'test.doc'; end
+        end
+      }
+
+      it 'should retrieve the s3 object from the correct bucket' do
+        expect(s3_bucket).to receive(:object).with('collection/test.doc')
+        subject.object
+      end
     end
   end
 

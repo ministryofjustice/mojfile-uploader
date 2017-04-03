@@ -1,33 +1,28 @@
 module MojFile
   class Delete
     include MojFile::S3
+    include MojFile::Logging
+
+    ACTION_NAME = 'Delete'
 
     attr_accessor :collection,
       :folder,
-      :file
+      :filename,
+      :logger
 
     def self.delete!(*args)
       new(*args).delete!
     end
 
-    def initialize(collection:, folder:, file:)
+    def initialize(collection:, folder:, filename:, logger: DummyLogger.new)
       @collection = collection
       @folder = folder
-      @file = file
+      @filename = filename
+      @logger = logger
     end
 
     def delete!
-      object.delete
-    end
-
-    private
-
-    def bucket_name
-      ENV.fetch('BUCKET_NAME')
-    end
-
-    def object
-      s3.bucket(bucket_name).object([collection, folder, file].compact.join('/'))
+      object.delete.tap { log_result(filename: object_name) }
     end
   end
 end
