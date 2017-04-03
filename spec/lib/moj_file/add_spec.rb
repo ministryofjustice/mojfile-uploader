@@ -3,12 +3,15 @@ require 'spec_helper'
 RSpec.describe MojFile::Add do
   let(:encoded_file_data) { 'QSBkb2N1bWVudCBib2R5\n' }
   let(:decoded_file_data) { 'A document body' }
+  let(:filename) { 'testfile.docx' }
+  let(:scanner) { double.as_null_object }
 
   let(:params) {
     {
-      'file_filename' => 'testfile.docx',
+      'file_filename' => filename,
       'folder' => 'some_folder',
-      'file_data' => encoded_file_data
+      'file_data' => encoded_file_data,
+      'scanner' => scanner
     }
   }
 
@@ -70,16 +73,33 @@ RSpec.describe MojFile::Add do
   end
 
   describe '#scan_clear?' do
-    before do
-      scan = instance_double(MojFile::Scan)
-      expect(scan).to receive(:scan_clear?)
-      expect(MojFile::Scan).to receive(:new).
-        with(filename: params['file_filename'], data: decoded_file_data).
-        and_return(scan)
+    let(:scanner_instance) { double.as_null_object }
+    subject { described_class.new(collection_ref: nil, params: params) }
+
+    specify 'it creates a new instance of the scanner' do
+      expect(scanner).to receive(:new).with(filename: filename, data: decoded_file_data).and_return(scanner_instance)
+      subject.scan_clear?
     end
 
-    it 'calls MojFile::Scan' do
-      described_class.new(collection_ref: nil, params: params).scan_clear?
+    specify 'it delegates the call to scanner instance' do
+      allow(scanner).to receive(:new).and_return(scanner_instance)
+      expect(scanner_instance).to receive(:scan_clear?)
+      subject.scan_clear?
+    end
+
+    context 'DO_NOT_SCAN is set' do
+      before do
+        allow(ENV).to receive(:[]).with('DO_NOT_SCAN').and_return(1)
+      end
+
+      specify 'skips the scanner' do
+        expect(scanner_instance).not_to receive(:scan_clear?)
+        subject.scan_clear?
+      end
+
+      specify 'always returns true' do
+        expect(subject.scan_clear?).to be(true)
+      end
     end
   end
 
