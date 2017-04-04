@@ -25,48 +25,43 @@ RSpec.describe MojFile::Add do
       described_class.new(collection_ref: nil, params: mocked_params)
     end
 
-    specify 'escapes html that was not otherwise removed' do
-      expect(CGI).to receive(:escapeHTML).and_return(value)
-      described_class.new(collection_ref: nil, params: params)
-    end
-
     specify 'removes most html tags' do
-      expect(Sanitize).to receive(:fragment).with(params['file_filename'], anything).and_return(value)
+      expect(Sanitize).to receive(:fragment).with(params['file_filename']).and_return(value)
       described_class.new(collection_ref: nil, params: params)
     end
 
     specify 'scrubs *' do
-      allow(CGI).to receive(:escapeHTML).and_return(value)
+      allow(Sanitize).to receive(:fragment).and_return(value)
       expect(value).to receive(:gsub).with('*', anything)
       described_class.new(collection_ref: nil, params: params)
     end
 
     specify 'scrubs =' do
-      allow(CGI).to receive(:escapeHTML).and_return(value)
+      allow(Sanitize).to receive(:fragment).and_return(value)
       expect(value).to receive(:gsub).with('=', anything)
       described_class.new(collection_ref: nil, params: params)
     end
 
     specify 'scrubs -' do # kills SQL comments
-      allow(CGI).to receive(:escapeHTML).and_return(value)
+      allow(Sanitize).to receive(:fragment).and_return(value)
       expect(value).to receive(:gsub).with('-', anything)
       described_class.new(collection_ref: nil, params: params)
     end
 
     specify 'scrubs %' do
-      allow(CGI).to receive(:escapeHTML).and_return(value)
+      allow(Sanitize).to receive(:fragment).and_return(value)
       expect(value).to receive(:gsub).with('%', anything)
       described_class.new(collection_ref: nil, params: params)
     end
 
     specify 'removes `drop table` case-insensitively'do
-      allow(CGI).to receive(:escapeHTML).and_return(value)
+      allow(Sanitize).to receive(:fragment).and_return(value)
       expect(value).to receive(:gsub).with(/drop\s+table/i, anything)
       described_class.new(collection_ref: nil, params: params)
     end
 
     specify 'removes `insert into` case-insensitively'do
-      allow(CGI).to receive(:escapeHTML).and_return(value)
+      allow(Sanitize).to receive(:fragment).and_return(value)
       expect(value).to receive(:gsub).with(/insert\s+into/i, anything)
       described_class.new(collection_ref: nil, params: params)
     end

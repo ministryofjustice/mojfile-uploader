@@ -73,9 +73,8 @@ module MojFile
     end
 
     def sanitize(value)
-      CGI.escapeHTML(
-        Sanitize.fragment(value, Sanitize::Config::RESTRICTED)
-      ).gsub('*', '&#42;').
+      Sanitize.fragment(value).
+      gsub('*', '&#42;').
       gsub('=', '&#61;').
       gsub('-', '&dash;').
       gsub('%', '&#37;').
