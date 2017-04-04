@@ -42,12 +42,6 @@ RSpec.describe MojFile::Add do
       described_class.new(collection_ref: nil, params: params)
     end
 
-    specify 'scrubs -' do # kills SQL comments
-      allow(Sanitize).to receive(:fragment).and_return(value)
-      expect(value).to receive(:gsub).with('-', anything)
-      described_class.new(collection_ref: nil, params: params)
-    end
-
     specify 'scrubs %' do
       allow(Sanitize).to receive(:fragment).and_return(value)
       expect(value).to receive(:gsub).with('%', anything)
