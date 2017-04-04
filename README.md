@@ -1,5 +1,8 @@
 # File uploader
 
+[![Build
+Status](https://travis-ci.org/ministryofjustice/mojfile-uploader.svg?branch=master)](https://travis-ci.org/ministryofjustice/mojfile-uploader)
+
 ## Description
 
 mojfile-uploader is designed as a drop-in component that can be added to any project
@@ -48,11 +51,11 @@ Response:
 When success:
     200 status code
     JSON body: { collection: 'collection reference', folder: 'subfolder', key: 'filename' }
-  
+
 When virus detected:
     400 status code
     JSON body: { errors: ['Virus scan failed'] }
-  
+
 When failure:
     422 status code
     JSON body: { errors: ['file_filename must be provided', 'file_data must be provided'] }
@@ -86,7 +89,7 @@ Response:
 When success:
     200 status code
     JSON body: { collection: '12345', folder: 'subfolder', files: [{ key: '12345/subfolder/test.doc', title: 'test.doc', last_modified: '2016-12-05T12:20:02.000Z' }] }
-  
+
 When collection not found:
     404 status code
     JSON body: { errors: ["Collection '12345' does not exist or is empty."] }
