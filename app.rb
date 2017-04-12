@@ -25,6 +25,7 @@ module MojFile
       checks = statuschecks
       {
         service_status: checks[:service_status],
+        version: version,
         dependencies: {
           external: {
             av: {
@@ -109,25 +110,37 @@ module MojFile
         JSON.parse(request.body.read)
       end
 
-      # Can't see a good way around this.
-      # rubocop:disable Metrics/CyclomaticComplexity
       def statuschecks
-        write_test = Add.write_test
-        detect_infected = Scan.statuscheck_infected
-        clean_file = Scan.statuscheck_clean
-        service_status = if write_test && detect_infected && clean_file
-                           'ok'
-                         else
-                           'failed'
-                         end
+        service_status = [write_test, detect_infected, clean_file].any?{ |s| s == 'failed' } ? 'failed' : 'ok'
         {
           service_status: service_status,
-          write_test: write_test ? 'ok' : 'failed',
-          detected_infected_file: detect_infected ? 'ok' : 'failed',
-          passed_clean_file: clean_file ? 'ok' : 'failed'
+          write_test: write_test,
+          detected_infected_file: detect_infected,
+          passed_clean_file: clean_file
         }
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
+
+      def write_test
+        @write_test ||= Add.write_test ? 'ok' : 'failed'
+      end
+
+      def detect_infected
+        @detect_infected ||= Scan.statuscheck_infected ? 'ok' : 'failed'
+      end
+
+      def clean_file
+        @clean_file ||= Scan.statuscheck_clean ? 'ok' : 'failed'
+      end
+
+      def version
+        # This has been manually checked in a demo app in a docker container running
+        # ruby:latest with Docker 1.12. Ymmv, however; in particular it may not
+        # work on alpine-based containers.
+        # NOTE:  This will always work on specs that are run in a git repo.  It
+        # should be stubbed at this level if you need a to test it.   See
+        # `spec/features/status_spec.rb` for an example.
+        `git rev-parse HEAD`.chomp
+      end
     end
   end
 end
