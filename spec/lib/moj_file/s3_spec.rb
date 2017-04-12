@@ -23,9 +23,38 @@ RSpec.describe MojFile::S3 do
   end
 
   describe '#s3' do
-    it 'sets up an AWS::S3::Resource with the correct region' do
-      expect(Aws::S3::Resource).to receive(:new).with(region: 'eu-west-1')
+    let(:resource) { instance_double(Aws::S3::Resource) }
+    let(:client) { instance_double(Aws::S3::Client) }
+
+    before do
+      allow(Aws::S3::Client).to receive(:new).and_return(client)
+      allow(Aws::S3::Resource).to receive(:new).and_return(resource)
       object.new.s3
+    end
+
+    context 'Aws::S3::Client' do
+      it 'sets the region' do
+        expect(Aws::S3::Client).to have_received(:new).with(hash_including({region: 'eu-west-1'}))
+      end
+
+      it 'increases the number of retries over default (3)' do
+        expect(Aws::S3::Client).to have_received(:new).with(hash_including({retry_limit: MojFile::S3::RETRY_LIMIT}))
+      end
+
+      it 'only compute checksums for operations that require them' do
+        # http://docs.aws.amazon.com/sdkforruby/api/Aws/S3/Client.html#initialize-instance_method
+        expect(Aws::S3::Client).to have_received(:new).with(hash_including({compute_checksums: false}))
+      end
+    end
+
+    context 'Aws::S3::Resource' do
+      it 'is exposed by the #s3 method' do
+        expect(object.new.s3).to eq(resource)
+      end
+
+      it 'uses the configured Aws::S3::Client' do
+        expect(Aws::S3::Resource).to have_received(:new).with(client: client)
+      end
     end
   end
 
