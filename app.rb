@@ -25,6 +25,7 @@ module MojFile
       checks = statuschecks
       {
         service_status: checks[:service_status],
+        version: version,
         dependencies: {
           external: {
             av: {
@@ -129,6 +130,16 @@ module MojFile
 
       def clean_file
         @clean_file ||= Scan.statuscheck_clean ? 'ok' : 'failed'
+      end
+
+      def version
+        # This has been manually checked in a demo app in a docker container running
+        # ruby:latest with Docker 1.12. Ymmv, however; in particular it may not
+        # work on alpine-based containers.
+        # NOTE:  This will always work on specs that are run in a git repo.  It
+        # should be stubbed at this level if you need a to test it.   See
+        # `spec/features/status_spec.rb` for an example.
+        `git rev-parse HEAD`.chomp
       end
     end
   end
