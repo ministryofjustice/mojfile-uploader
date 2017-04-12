@@ -109,25 +109,27 @@ module MojFile
         JSON.parse(request.body.read)
       end
 
-      # Can't see a good way around this.
-      # rubocop:disable Metrics/CyclomaticComplexity
       def statuschecks
-        write_test = Add.write_test
-        detect_infected = Scan.statuscheck_infected
-        clean_file = Scan.statuscheck_clean
-        service_status = if write_test && detect_infected && clean_file
-                           'ok'
-                         else
-                           'failed'
-                         end
+        service_status = [write_test, detect_infected, clean_file].any?{ |s| s == 'failed' } ? 'failed' : 'ok'
         {
           service_status: service_status,
-          write_test: write_test ? 'ok' : 'failed',
-          detected_infected_file: detect_infected ? 'ok' : 'failed',
-          passed_clean_file: clean_file ? 'ok' : 'failed'
+          write_test: write_test,
+          detected_infected_file: detect_infected,
+          passed_clean_file: clean_file
         }
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
+
+      def write_test
+        @write_test ||= Add.write_test ? 'ok' : 'failed'
+      end
+
+      def detect_infected
+        @detect_infected ||= Scan.statuscheck_infected ? 'ok' : 'failed'
+      end
+
+      def clean_file
+        @clean_file ||= Scan.statuscheck_clean ? 'ok' : 'failed'
+      end
     end
   end
 end
