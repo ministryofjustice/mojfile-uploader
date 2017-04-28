@@ -66,7 +66,9 @@ RSpec.describe MojFile::Add do
     subject { described_class.new(collection_ref: nil, params: params) }
 
     specify 'it creates a new instance of the scanner' do
-      expect(scanner).to receive(:new).with(filename: filename, data: decoded_file_data).and_return(scanner_instance)
+      expect(scanner).to receive(:new).
+        with(filename: filename, data: decoded_file_data, logger: a_kind_of(DummyLogger)).
+        and_return(scanner_instance)
       subject.scan_clear?
     end
 

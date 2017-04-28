@@ -1,16 +1,20 @@
 module MojFile
   class List
     include MojFile::S3
+    include MojFile::Logging
 
-    attr_accessor :collection, :folder
+    ACTION_NAME = 'List'
+
+    attr_accessor :collection, :folder, :logger
 
     def self.call(*args)
       new(*args)
     end
 
-    def initialize(collection_ref, folder:)
+    def initialize(collection_ref, folder:, logger: DummyLogger.new)
       @collection = collection_ref
       @folder = folder
+      @logger = logger
     end
 
     def files
@@ -19,6 +23,9 @@ module MojFile
         folder: folder,
         files: map_files
       }
+    rescue => error
+      log_result(error: error.inspect, backtrace: error.backtrace)
+      raise
     end
 
     def files?

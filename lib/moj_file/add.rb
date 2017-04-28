@@ -33,7 +33,7 @@ module MojFile
     def upload
       object.put(body: decoded_file_data, server_side_encryption: 'AES256').tap { log_result }
     rescue => error
-      log_result(error: error.message, backtrace: error.backtrace)
+      log_result(error: error.inspect, backtrace: error.backtrace)
       false
     end
 
@@ -48,7 +48,7 @@ module MojFile
       # breaking in the Heroku demo environment, which cannot run/access the
       # virus scanning container.
       return true if ENV['DO_NOT_SCAN']
-      scanner.new(filename: filename, data: decoded_file_data).scan_clear?
+      scanner.new(filename: filename, data: decoded_file_data, logger: logger).scan_clear?
     end
 
     def self.write_test
