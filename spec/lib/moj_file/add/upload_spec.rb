@@ -95,7 +95,7 @@ RSpec.describe MojFile::Add, '#upload' do
       end
 
       it 'logs the error message' do
-        expect(logger).to receive(:error).with(hash_including(error: 'StandardError'))
+        expect(logger).to receive(:error).with(hash_including(error: /StandardError/))
         subject.upload
       end
 
