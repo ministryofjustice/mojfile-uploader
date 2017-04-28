@@ -48,7 +48,7 @@ module MojFile
       # breaking in the Heroku demo environment, which cannot run/access the
       # virus scanning container.
       return true if ENV['DO_NOT_SCAN']
-      scanner.new(filename: filename, data: decoded_file_data).scan_clear?
+      scanner.new(filename: filename, data: decoded_file_data, logger: logger).scan_clear?
     end
 
     def self.write_test

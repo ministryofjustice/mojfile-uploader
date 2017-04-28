@@ -18,13 +18,21 @@ RSpec.describe MojFile::Scan do
   let(:resp) { instance_double(RestClient::Response, body: clean_result) }
   let(:infected) { instance_double(RestClient::Response, body: infected_result) }
 
+  describe '.initialize' do
+    subject { described_class.new(filename: params[:filename], data: params[:data]) }
+
+    specify '#logger is set to DummyLogger by default' do
+      expect(subject.logger).to be_a_kind_of(DummyLogger)
+    end
+  end
+
   describe '.statuscheck_clean' do
     it 'sends a simple file name to aid identifying these calls in the logs' do
       expect(described_class).
         to receive(:new).
         with(hash_including(filename: 'clean test')).and_return(
           instance_double(described_class, scan_clear?: true)
-        )
+      )
       described_class.statuscheck_clean
     end
 
@@ -47,7 +55,7 @@ RSpec.describe MojFile::Scan do
         to receive(:new).
         with(hash_including(filename: 'eicar test')).and_return(
           instance_double(described_class, scan_clear?: false)
-        )
+      )
       described_class.statuscheck_infected
     end
 
@@ -77,7 +85,7 @@ RSpec.describe MojFile::Scan do
       it 'returns true' do
         expect(
           described_class.
-            new(filename: params[:filename], data: params[:data]).scan_clear?
+          new(filename: params[:filename], data: params[:data]).scan_clear?
         ).to be_truthy
       end
     end
@@ -90,8 +98,23 @@ RSpec.describe MojFile::Scan do
       it 'returns false' do
         expect(
           described_class.
-            new(filename: params[:filename], data: params[:data]).scan_clear?
+          new(filename: params[:filename], data: params[:data]).scan_clear?
         ).to be_falsey
+      end
+    end
+
+    context 'errors' do
+      subject { described_class.new(filename: params[:filename], data: params[:data]) }
+      let(:resp) { instance_double(RestClient::Response, body: nil) }
+      let(:logger) { double.as_null_object }
+
+      before do
+        subject.logger = logger
+      end
+
+      it 'catches and re-raises mangled response errors' do
+        expect(logger).to receive(:error).with(hash_including(error: /NoMethodError/, backtrace: a_kind_of(Array)))
+        expect { subject.scan_clear? }.to raise_error(NoMethodError)
       end
     end
 
