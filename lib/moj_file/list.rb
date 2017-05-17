@@ -22,7 +22,7 @@ module MojFile
         collection: collection,
         folder: folder,
         files: map_files
-      }
+      }.tap { |o| log_result(o) }
     rescue => error
       log_result(error: error.inspect, backtrace: error.backtrace)
       raise

@@ -4,17 +4,6 @@ require 'logstash-logger'
 require_relative 'lib/moj_file'
 require 'pry'
 
-module LogStashLogger
-  module Formatter
-    class PrettyJson < Base
-      def call(severity, time, progname, message)
-        super
-        "#{JSON.pretty_generate(@event)}\n"
-      end
-    end
-  end
-end
-
 module MojFile
   class Uploader < Sinatra::Base
     configure do
@@ -98,7 +87,8 @@ module MojFile
 
       def logger_config
         env = ENV['RACK_ENV']
-        defaults = { formatter: LogStashLogger::Formatter::PrettyJson }
+        defaults = { formatter: :json_lines }
+
         if env == 'production'
           defaults.merge!(type: :stdout)
         else
