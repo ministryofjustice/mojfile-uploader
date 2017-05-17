@@ -28,7 +28,8 @@ RSpec.describe MojFile::List do
         folder: folder,
         files: [
           {key: '12345/subfolder/test123.txt', title: 'test123.txt', last_modified: '2016-12-01T16:26:44.000Z'}
-      ]
+        ],
+        action: 'List'
       }
     }
 
@@ -45,7 +46,8 @@ RSpec.describe MojFile::List do
           folder: folder,
           files: [
             {key: '12345/test123.txt', title: 'test123.txt', last_modified: '2016-12-01T16:26:44.000Z'}
-        ]
+          ],
+          action: 'List'
         }
       }
       let(:objects) { [double('Object', key: '12345/test123.txt', last_modified: '2016-12-01T16:26:44.000Z')] }

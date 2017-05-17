@@ -42,7 +42,8 @@ RSpec.describe MojFile::List do
                 title: 'hmrc_appeal.docx',
                 last_modified: '2016-10-12T17:50:30.000Z'
               }
-          ]
+          ],
+          action: 'List'
           }.to_json
         }
 
@@ -93,7 +94,8 @@ RSpec.describe MojFile::List do
                 title: 'hmrc_appeal.docx',
                 last_modified: '2016-10-12T17:50:30.000Z'
               }
-          ]
+          ],
+          action: 'List'
           }.to_json
         }
 
