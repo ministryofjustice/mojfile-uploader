@@ -87,7 +87,10 @@ module MojFile
 
       def logger_config
         env = ENV['RACK_ENV']
-        defaults = { formatter: :json_lines }
+        defaults = {
+          formatter: :json_lines,
+          customize_event: Proc.new{ |event| event['tags'] = ['moj_uploader'] }
+        }
 
         if env == 'production'
           defaults.merge!(type: :stdout)
