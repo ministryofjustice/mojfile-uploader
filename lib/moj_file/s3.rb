@@ -11,19 +11,10 @@ module MojFile
     # [2](http://docs.aws.amazon.com/general/latest/gr/api-retries.html) it uses
     RETRY_LIMIT = 5.freeze
     REGION = ENV.fetch('AWS_REGION', 'eu-west-1').freeze
-    STATUS_RSS_ENDPOINT =
-      "https://status.aws.amazon.com/rss/s3-#{REGION}.rss".freeze
 
     def s3
       client = Aws::S3::Client.new(region: REGION, retry_limit: RETRY_LIMIT, compute_checksums: false)
       Aws::S3::Resource.new(client: client)
-    end
-
-    def self.status
-      status = RestClient.get(STATUS_RSS_ENDPOINT)
-      Nokogiri.parse(status.body).xpath("//item/title").first.text
-		rescue NoMethodError
-			'N/A'
     end
 
     def object

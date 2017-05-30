@@ -22,10 +22,6 @@ module MojFile
               passed_clean_file: checks[:passed_clean_file]
             },
             s3: {
-              # This is here so ops do not have to go looking for the AWS S3
-              # status if the write_test fails. It does not change the
-              # service_status
-              S3::REGION.tr('-','_') => S3.status,
               write_test: checks[:write_test]
             }
           }
@@ -78,6 +74,10 @@ module MojFile
                      filename: filename,
                      logger: logger)
       status(204)
+    end
+
+    error do
+      { message: env['sinatra.error'].message }.to_json
     end
 
     helpers do

@@ -122,27 +122,5 @@ RSpec.describe MojFile::S3 do
       </rss>
       XML
     }
-
-    it 'calls the AWS endpoint' do
-      expect(RestClient).to receive(:get).with(described_class::STATUS_RSS_ENDPOINT)
-      described_class.status
-    end
-
-    it 'parses the response' do
-      allow(RestClient).to receive(:get).and_return(double('response', body: status_response))
-      expect(Nokogiri).to receive(:parse)
-      described_class.status
-    end
-
-    it 'returns the most current item' do
-      allow(RestClient).to receive(:get).and_return(double('response', body: status_response))
-      expect(described_class.status).to eq('Service is operating normally')
-    end
-
-    # This would be the error if the xpath didn't exist.
-    it 'returns N/A if Nokogiri raises a NoMethodError' do
-      allow(RestClient).to receive(:get).and_return(double('response', body: ''))
-      expect(described_class.status).to eq('N/A')
-    end
   end
 end

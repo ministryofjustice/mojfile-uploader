@@ -34,7 +34,7 @@ module MojFile
       object.put(body: decoded_file_data, server_side_encryption: 'AES256').tap { log_result }
     rescue => error
       log_result(error: error.inspect, backtrace: error.backtrace)
-      false
+      raise
     end
 
     def valid?
@@ -52,7 +52,7 @@ module MojFile
     end
 
     def self.write_test
-      # Errors get trapped and logged in `#upload`
+      # Errors get logged in `#upload`
       new(collection_ref: 'status',
           params: {
         'file_filename' => 'status.docx',
