@@ -34,7 +34,7 @@ module MojFile
       object.put(body: decoded_file_data, server_side_encryption: 'AES256').tap { log_result }
     rescue => error
       log_result(error: error.inspect, backtrace: error.backtrace)
-      false
+      raise error
     end
 
     def valid?
