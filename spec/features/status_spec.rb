@@ -7,7 +7,6 @@ RSpec.describe 'Parsed status response' do
   let(:s3) { resp[:dependencies][:external][:s3] }
 
   before do
-    allow(MojFile::S3).to receive(:status)
     allow(MojFile::Add).to receive(:write_test)
     allow(MojFile::Scan).to receive(:statuscheck_clean)
     allow(MojFile::Scan).to receive(:statuscheck_infected)
