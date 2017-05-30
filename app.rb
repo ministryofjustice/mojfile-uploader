@@ -80,6 +80,10 @@ module MojFile
       status(204)
     end
 
+    error do
+      { message: env['sinatra.error'].message }.to_json
+    end
+
     helpers do
       def logger
         @logger ||= LogStashLogger.new(logger_config)

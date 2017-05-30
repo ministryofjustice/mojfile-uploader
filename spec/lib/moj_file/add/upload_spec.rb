@@ -4,17 +4,17 @@ require 'spec_helper'
 RSpec.shared_examples 'common logging actions' do |log_level|
   it 'logs the action' do
     expect(logger).to receive(log_level).with(hash_including(action: 'Add'))
-    subject.upload
+    subject.upload rescue StandardError
   end
 
   it 'logs the filename' do
     expect(logger).to receive(log_level).with(hash_including(filename: 'ABC123/some_folder/testfile.docx'))
-    subject.upload
+    subject.upload rescue StandardError
   end
 
   it 'logs the size of file_data in bytes' do
     expect(logger).to receive(log_level).with(hash_including(filesize: 22))
-    subject.upload
+    subject.upload rescue StandardError
   end
 end
 
@@ -49,11 +49,6 @@ RSpec.describe MojFile::Add, '#upload' do
     expect(s3_response).to receive(:put).with(hash_including(server_side_encryption: 'AES256')).and_return(true)
     allow(subject).to receive(:object).and_return(s3_response)
     subject.upload
-  end
-
-  it 'returns false when an error occurs' do
-    allow(subject).to receive(:object).and_raise(StandardError)
-    expect(subject.upload).to eq(false)
   end
 
   it 'returns true when the write is successful' do
@@ -91,17 +86,17 @@ RSpec.describe MojFile::Add, '#upload' do
 
       it 'logs at error level' do
         expect(logger).to receive(:error)
-        subject.upload
+        subject.upload rescue StandardError
       end
 
       it 'logs the error message' do
         expect(logger).to receive(:error).with(hash_including(error: /StandardError/))
-        subject.upload
+        subject.upload rescue StandardError
       end
 
       it 'logs the backtrace' do
         expect(logger).to receive(:error).with(hash_including(backtrace: an_instance_of(Array)))
-        subject.upload
+        subject.upload rescue StandardError
       end
 
       include_examples 'common logging actions', :error

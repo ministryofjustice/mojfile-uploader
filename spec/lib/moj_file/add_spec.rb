@@ -15,6 +15,13 @@ RSpec.describe MojFile::Add do
     }
   }
 
+  describe '#upload' do
+    it 're-raises the error' do
+      stub_request(:put, /\/status\/status\.docx/).to_return(status: 422)
+      expect{ described_class.write_test }.to raise_error(Aws::S3::Errors::Http422Error)
+    end
+  end
+
   describe '#filename' do
     let(:value) { double.as_null_object }
 
@@ -116,9 +123,9 @@ RSpec.describe MojFile::Add do
       expect(described_class.write_test).to be_truthy
     end
 
-    it 'fails to upload a test file' do
+    it 're-raises the exception if it fails to upload a test file' do
       stub_request(:put, /\/status\/status\.docx/).to_return(status: 422)
-      expect(described_class.write_test).to be(false)
+      expect{ described_class.write_test }.to raise_error(Aws::S3::Errors::Http422Error)
     end
 
     it 'receives the parameters required for the test file' do
@@ -127,9 +134,9 @@ RSpec.describe MojFile::Add do
         to receive(:new).
         with(collection_ref: 'status',
              params: {
-        'file_filename' => 'status.docx',
-        'file_data' => 'QSBkb2N1bWVudCBib2R5'
-      }
+              'file_filename' => 'status.docx',
+              'file_data' => 'QSBkb2N1bWVudCBib2R5'
+             }
             ).and_return(instance_double(MojFile::Add, upload: response))
       described_class.write_test
     end
