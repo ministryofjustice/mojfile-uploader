@@ -116,6 +116,10 @@ variables set in `env.example`.
 
 ## Run Locally
 
+**Important**: the images for the malware scanner (Clamav) are in a v1 docker registry.  
+To be able to login to the registry and pull these images in case your local docker version doesn't support v1 of the API, you will need to add the following to to the docker daemon config:  
+`"disable-legacy-registry" : false`
+
 ```
 cp .env.example .env
 # update the details in that file with the credentials created above
