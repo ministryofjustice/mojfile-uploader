@@ -1,4 +1,4 @@
-FROM ministryofjustice/ruby:2.3.3-webapp-onbuild
+FROM ministryofjustice/ruby:2.5.3-webapp-onbuild
 
 ENV PUMA_PORT 9292
 ENV RACK_ENV production
