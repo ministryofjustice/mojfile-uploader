@@ -12,11 +12,9 @@ services:
     links:
       - clamav-rest
   clamav:
-    # https://github.com/ministryofjustice/moj-clamav-daemon
-    image: registry.service.dsd.io/ministryofjustice/clamav:0.1.0
+     build: https://github.com/ministryofjustice/moj-clamav-daemon.git
   clamav-rest:
-    # https://github.com/ministryofjustice/moj-clamav-rest
-    image: registry.service.dsd.io/ministryofjustice/clamav-rest:0.1.0
+    build: https://github.com/ministryofjustice/moj-clamav-rest.git
     links:
       - clamav:clamav-server
     environment:
