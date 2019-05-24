@@ -113,7 +113,7 @@ GEM
     psych (3.1.0)
     public_suffix (2.0.5)
     puma (3.8.2)
-    rack (2.0.6)
+    rack (2.0.7)
     rack-protection (2.0.3)
       rack
     rack-test (0.6.3)
@@ -220,4 +220,4 @@ RUBY VERSION
    ruby 2.5.3p105
 
 BUNDLED WITH
-   1.16.6
+   1.17.3
