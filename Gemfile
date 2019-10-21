@@ -26,6 +26,7 @@ group :test do
   gem 'dotenv'
   gem 'fuubar'
   gem 'rack-test'
+  gem 'rspec_junit_formatter', '~> 0.4.1'
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
   gem 'simplecov', require: false
