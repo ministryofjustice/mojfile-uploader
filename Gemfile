@@ -1,9 +1,15 @@
 # frozen_string_literal: true
 source 'https://rubygems.org'
 
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  "https://github.com/#{repo_name}.git"
+end
+
 ruby '2.5.7'
 
 gem 'aws-sdk'
+gem 'azure_env_secrets', github: 'ministryofjustice/azure_env_secrets', tag: 'v0.1.3'
 gem 'logstash-logger'
 gem 'nokogiri'
 gem 'pry'
