@@ -1,3 +1,7 @@
+# Load ENV variables from the Azure Key Vault
+require 'azure_env_secrets'
+::AzureEnvSecrets.load
+
 require 'raven'
 require 'sinatra'
 require_relative 'app'
