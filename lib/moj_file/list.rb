@@ -48,12 +48,12 @@ module MojFile
       [collection, folder].compact.join('/') + '/'
     end
 
-    def bucket_name
+    def container_name
       ENV.fetch('CONTAINER_NAME')
     end
 
     def objects
-      @objects ||= storage.list_blobs(bucket_name, prefix: prefix)
+      @objects ||= storage.list_blobs(container_name, prefix: prefix)
     end
   end
 end

@@ -7,11 +7,11 @@ module MojFile
 
     private
 
-    def bucket_name
+    def container_name
       ENV.fetch('CONTAINER_NAME')
     end
 
-    def object_name
+    def blob_name
       [collection, folder, filename].compact.join('/')
     end
   end

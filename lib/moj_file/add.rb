@@ -30,7 +30,7 @@ module MojFile
     end
 
     def upload
-      storage.create_block_blob(bucket_name, object_name, decoded_file_data).tap { log_result }
+      storage.create_block_blob(container_name, blob_name, decoded_file_data).tap { log_result }
     rescue => error
       log_result(error: error.inspect, backtrace: error.backtrace)
       raise
@@ -64,7 +64,7 @@ module MojFile
     def log_result(params = {})
       params.merge!(
         {
-          filename: object_name,
+          filename: blob_name,
           filesize: file_data.size
         }
       )
