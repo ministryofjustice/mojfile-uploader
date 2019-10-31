@@ -1,5 +1,6 @@
 module MojFile
   class Delete
+    include MojFile::AzureBlobStorage
     include MojFile::Logging
 
     ACTION_NAME = 'Delete'
@@ -21,7 +22,7 @@ module MojFile
     end
 
     def delete!
-      object.delete.tap { log_result(filename: object_name) }
+      storage.delete_blob(bucket_name, object_name).tap { log_result(filename: object_name) }
     end
   end
 end

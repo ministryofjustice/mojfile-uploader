@@ -4,6 +4,7 @@ require 'sanitize'
 
 module MojFile
   class Add
+    include MojFile::AzureBlobStorage
     include MojFile::Logging
 
     ACTION_NAME = 'Add'
@@ -29,7 +30,7 @@ module MojFile
     end
 
     def upload
-      object.put(body: decoded_file_data, server_side_encryption: 'AES256').tap { log_result }
+      storage.create_block_blob(bucket_name, object_name, decoded_file_data).tap { log_result }
     rescue => error
       log_result(error: error.inspect, backtrace: error.backtrace)
       raise
