@@ -1,3 +1,5 @@
+require 'azure/storage/blob'
+require_relative 'moj_file/azure_blob_storage'
 require_relative 'moj_file/logging'
 
 require_relative 'moj_file/add'

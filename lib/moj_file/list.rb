@@ -1,5 +1,6 @@
 module MojFile
   class List
+    include MojFile::AzureBlobStorage
     include MojFile::Logging
 
     ACTION_NAME = 'List'
@@ -36,9 +37,9 @@ module MojFile
     def map_files
       objects.map{ |o|
         {
-          key: o.key,
-          title: o.key.sub(prefix,''),
-          last_modified: o.last_modified
+          key: o.name,
+          title: o.name.sub(prefix,''),
+          last_modified: o.properties[:last_modified]
         }
       }
     end
@@ -48,11 +49,11 @@ module MojFile
     end
 
     def bucket_name
-      ENV.fetch('BUCKET_NAME')
+      ENV.fetch('CONTAINER_NAME')
     end
 
     def objects
-      @objects ||= s3.bucket(bucket_name).objects(prefix: prefix).to_set
+      @objects ||= storage.list_blobs(bucket_name, prefix: prefix)
     end
   end
 end
