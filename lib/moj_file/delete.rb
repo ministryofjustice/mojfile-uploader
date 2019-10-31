@@ -22,7 +22,7 @@ module MojFile
     end
 
     def delete!
-      storage.delete_blob(bucket_name, object_name).tap { log_result(filename: object_name) }
+      storage.delete_blob(container_name, blob_name).tap { log_result(filename: blob_name) }
     end
   end
 end
