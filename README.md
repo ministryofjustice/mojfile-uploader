@@ -12,7 +12,7 @@ Any files that are uploaded are passed through ClamAV virus scanning, which runs
 a pair of bundled docker containers (one running the ClamAV daemon, and the other
 exposing a REST interface to it).
 
-Clean files are uploaded to an S3 bucket. Infected files are rejected.
+Clean files are uploaded to an Azure Blob Storage container. Infected files are rejected.
 
 The assumption here is that files are being uploaded by users, but that a separate
 admin interface will be used to download the files. This means that, if the user's
@@ -20,12 +20,12 @@ credentials/session are compromised, an attacker would not be able to view the c
 of any of the user's uploaded files. To this end;
 
 * The uploader API does not expose any 'download' function
-* The S3 bucket security settings should not permit the uploader to download any files
+* The Azure Blob Storage container security settings should not permit the uploader to download any files
 
 The uploader can list the uploaded files, and can delete any of them (so that the user
 can correct mistakes).
 
-At the root level of the bucket, the uploader creates _collections_, which are a group
+At the root level of the container, the uploader creates _collections_, which are a group
 of related files. You can add files to a collection explicitly by specifying its name,
 or implicitly have it create a new collection by leaving out the name. Underneath
 collections, the uploader optionally supports a single level of (sub)_folders_.
@@ -97,38 +97,46 @@ When collection not found:
 
 ## Setup
 
-An S3 bucket is required to store the uploaded files. This bucket
-should have the minimum possible permissions; list objects, put object,
-delete object.
+An Azure Blob Storage container is required to store the uploaded files. This container
+should have the minimum possible permissions; list blobs, put blob,
+delete blob.
 
-The scripts for easy automation of these tasks can be found in the
-[Mojfile S3 bucket setup repo](https://github.com/ministryofjustice/mojfile-s3-bucket-setup)
-However, those scripts assume that an IAM *user* will authenticate to the S3 bucket.
-In production, IAM *roles* will be used, such that the container in which the application
-is running is granted (or not) appropriate permissions to operate on the S3 bucket.
+## Note on Azure Storage Credentials
 
-## Note on AWS Credentials
-
-These are no longer needed in production as we now use roles.  They are
-still required if you want to run the application locally.  They are
-picked up automatically by `aws-sdk` if you use the environment
+They are picked up automatically by the `azure-storage-blob` gem if you use the environment
 variables set in `env.example`.
 
 ## Run Locally
 
-**Important**: the images for the malware scanner (Clamav) are in a v1 docker registry.  
-To be able to login to the registry and pull these images in case your local docker version doesn't support v1 of the API, you will need to add the following to to the docker daemon config:  
-`"disable-legacy-registry" : false`
+Create the .env file
 
 ```
 cp .env.example .env
-# update the details in that file with the credentials created above
-# remove the `export` commands
+```
+
+Update the details in that file.
+
+**With docker**
+
+```
 docker-compose build
 docker-compose up
 ```
+The above commands will create and run the uploader and the AV scanner containers.
 
-It does not need the `.env` file in the production container.
+**Without docker**
+
+The AV scanner must be running before you start the uploader.
+
+```
+dotenv rackup
+```
+
+To skip the AV scanning, run instead:
+
+```
+DO_NOT_SCAN=true dotenv rackup
+```
 
 ## Scanner endpoint
 
@@ -136,14 +144,6 @@ If the virus scanner is not available from this application at
 `http://clamav-rest:8080/scan` then you will need to set the
 `SCANNER_URL` environment variable to point at the correct endpoint.  It
 *should* be available if the app is launched using docker compose.
-
-## Run outside docker
-
-```bash
-cp .env.example .env
-# ... and update the details in that file with the credentials created above
-bundle exec rackup
-```
 
 ## Testing
 
@@ -157,11 +157,13 @@ bundle exec rake
 
 ## File uploader example app
 
-Included in the directory `example_app` there is a simple Sinatra app to show how to integrate the File Uploader JQuery plugin with the client gem.
+Included in the directory `example_app` there is a simple Sinatra app to show how to integrate
+the File Uploader JQuery plugin with the client gem.
 
 ### Running the app
 
-First make sure in file `example_app/config.ru` the HttpClient base_url points to the right URL/port where the MOJ Uploader app is running.
+First make sure in file `example_app/config.ru` the HttpClient base_url points to the right URL/port
+where the MOJ Uploader app is running.
 
 In the `example_app` directory, run:
 
