@@ -4,9 +4,7 @@ require 'sanitize'
 
 module MojFile
   class Add
-    include MojFile::S3
     include MojFile::Logging
-    extend Forwardable
 
     ACTION_NAME = 'Add'
 

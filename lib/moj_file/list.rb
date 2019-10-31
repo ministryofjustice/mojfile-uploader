@@ -1,6 +1,5 @@
 module MojFile
   class List
-    include MojFile::S3
     include MojFile::Logging
 
     ACTION_NAME = 'List'

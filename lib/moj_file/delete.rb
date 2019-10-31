@@ -1,6 +1,5 @@
 module MojFile
   class Delete
-    include MojFile::S3
     include MojFile::Logging
 
     ACTION_NAME = 'Delete'
