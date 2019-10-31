@@ -25,12 +25,12 @@ group :development, :test do
   gem 'mutant-rspec'
   gem 'pry-byebug'
   gem 'rspec'
+  gem 'dotenv'
 end
 
 group :test do
   gem 'brakeman'
   gem 'capybara'
-  gem 'dotenv'
   gem 'fuubar'
   gem 'rack-test'
   gem 'rspec_junit_formatter', '~> 0.4.1'
