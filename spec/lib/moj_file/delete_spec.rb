@@ -12,14 +12,16 @@ RSpec.describe MojFile::Delete do
   subject { described_class.new(args) }
 
   describe 'deleting' do
-    let(:s3_object) { double('S3', delete: true) }
+    let(:storage) { instance_double(Azure::Storage::Blob::BlobService, delete_blob: nil) }
+    let(:container_name) { 'dummy-container' }
+    let(:blob_name) { 'collection/some_folder/testfile.docx' }
 
     before do
-      allow(subject).to receive_message_chain(:s3, :bucket, :object).and_return(s3_object)
+      allow(subject).to receive(:storage).and_return(storage)
     end
 
-    it 'deletes the s3 object' do
-      expect(s3_object).to receive(:delete)
+    it 'deletes the blob' do
+      expect(storage).to receive(:delete_blob).with(container_name, blob_name)
       subject.delete!
     end
 
