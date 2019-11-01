@@ -29,13 +29,13 @@ module MojFile
     end
 
     def files?
-      !objects.empty?
+      !blobs.empty?
     end
 
     private
 
     def map_files
-      objects.map{ |o|
+      blobs.map{ |o|
         {
           key: o.name,
           title: o.name.sub(prefix,''),
@@ -52,8 +52,8 @@ module MojFile
       ENV.fetch('CONTAINER_NAME')
     end
 
-    def objects
-      @objects ||= storage.list_blobs(container_name, prefix: prefix)
+    def blobs
+      @blobs ||= storage.list_blobs(container_name, prefix: prefix)
     end
   end
 end
