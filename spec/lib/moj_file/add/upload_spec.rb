@@ -29,7 +29,9 @@ RSpec.describe MojFile::Add, '#upload' do
     }
   }
 
-  let(:s3_response) { double.as_null_object }
+  let(:blob_storage_response) { double.as_null_object }
+  let(:container_name) { 'dummy-container' }
+  let(:blob_name) { 'ABC123/some_folder/testfile.docx' }
 
   subject {
     described_class.new(collection_ref: nil, params: params)
@@ -39,22 +41,16 @@ RSpec.describe MojFile::Add, '#upload' do
     allow(SecureRandom).to receive(:uuid).and_return('ABC123')
   end
 
-  it 'puts the decoded file data to the bucket' do
-    expect(s3_response).to receive(:put).with(hash_including(body: 'A document body')).and_return(true)
-    allow(subject).to receive(:object).and_return(s3_response)
+  it 'puts the decoded file data to the container' do
+    expect(blob_storage_response).to receive(:create_block_blob).with(container_name, blob_name, 'A document body').and_return(Azure::Storage::Blob::Blob)
+    allow(subject).to receive(:storage).and_return(blob_storage_response)
     subject.upload
   end
 
-  it 'tells S3 to encrypt the stored data using AES256' do
-    expect(s3_response).to receive(:put).with(hash_including(server_side_encryption: 'AES256')).and_return(true)
-    allow(subject).to receive(:object).and_return(s3_response)
-    subject.upload
-  end
-
-  it 'returns true when the write is successful' do
-    allow(s3_response).to receive(:put).and_return(true)
-    allow(subject).to receive(:object).and_return(s3_response)
-    expect(subject.upload).to eq(true)
+  it 'returns a Blob object when the write is successful' do
+    allow(blob_storage_response).to receive(:create_block_blob).and_return(Azure::Storage::Blob::Blob)
+    allow(subject).to receive(:storage).and_return(blob_storage_response)
+    expect(subject.upload).to eq(Azure::Storage::Blob::Blob)
   end
 
   describe 'logging' do
@@ -66,8 +62,8 @@ RSpec.describe MojFile::Add, '#upload' do
 
     context 'success' do
       before do
-        allow(s3_response).to receive(:put).and_return(true)
-        allow(subject).to receive(:object).and_return(s3_response)
+        allow(blob_storage_response).to receive(:create_block_blob).and_return(Azure::Storage::Blob::Blob)
+        allow(subject).to receive(:storage).and_return(blob_storage_response)
       end
 
       it 'logs at info level' do
@@ -81,7 +77,7 @@ RSpec.describe MojFile::Add, '#upload' do
     context 'errors' do
       before do
         allow(SecureRandom).to receive(:uuid).and_return('ABC123')
-        allow(subject).to receive(:object).and_raise(StandardError)
+        allow(subject).to receive(:storage).and_raise(StandardError)
       end
 
       it 'logs at error level' do

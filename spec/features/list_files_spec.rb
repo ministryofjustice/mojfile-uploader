@@ -1,29 +1,37 @@
 require_relative '../spec_helper'
 
 RSpec.describe MojFile::List do
-  let!(:s3_stub) {
-    stub_request(:get, /uploader-test-bucket.+amazonaws\.com\/\?encoding-type=url&prefix=12345/).
-    to_return(body: aws_response, status: 200)
+  let(:prefix) { "12345/" }
+  let!(:blob_storage_stub) {
+    stub_request(:get, "https://dummy-account.blob.core.windows.net/dummy-container?comp=list&prefix=#{prefix}&restype=container").
+    to_return(body: blob_storage_response, status: 200)
   }
 
   context 'happy paths' do
     context 'when a subfolder is provided' do
+      let(:prefix) { '12345/subfolder/' }
+
       describe 'the collection has files' do
-        let(:aws_response) {
+        let(:blob_storage_response) {
           <<-XML
-<?xml version="1.0" encoding="UTF-8"?>
-<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-    <Name>bucket</Name>
-    <KeyCount>2</KeyCount>
-    <Contents>
-        <Key>12345/subfolder/solicitor.docx</Key>
-        <LastModified>2016-10-12T17:50:30.000Z</LastModified>
-    </Contents>
-    <Contents>
-        <Key>12345/subfolder/hmrc_appeal.docx</Key>
-        <LastModified>2016-10-12T17:50:30.000Z</LastModified>
-    </Contents>
-</ListBucketResult>
+<?xml version="1.0" encoding="utf-8"?>
+<EnumerationResults ServiceEndpoint="https://dummy-account.blob.core.windows.net/" ContainerName="dummy-container">
+  <Blobs>
+    <Blob>
+      <Name>12345/subfolder/solicitor.docx</Name>
+      <Properties>
+        <Last-Modified>Mon, 04 Nov 2019 12:30:14 GMT</Last-Modified>
+      </Properties>
+    </Blob>
+    <Blob>
+      <Name>12345/subfolder/hmrc_appeal.docx</Name>
+      <Properties>
+        <Last-Modified>Mon, 04 Nov 2019 13:34:37 GMT</Last-Modified>
+      </Properties>
+    </Blob>
+  </Blobs>
+  <NextMarker />
+</EnumerationResults>
           XML
         }
 
@@ -35,12 +43,12 @@ RSpec.describe MojFile::List do
               {
                 key: '12345/subfolder/solicitor.docx',
                 title: 'solicitor.docx',
-                last_modified: '2016-10-12T17:50:30.000Z'
+                last_modified: 'Mon, 04 Nov 2019 12:30:14 GMT'
               },
               {
                 key: '12345/subfolder/hmrc_appeal.docx',
                 title: 'hmrc_appeal.docx',
-                last_modified: '2016-10-12T17:50:30.000Z'
+                last_modified: 'Mon, 04 Nov 2019 13:34:37 GMT'
               }
           ],
           action: 'List'
@@ -61,21 +69,26 @@ RSpec.describe MojFile::List do
 
     context 'when no subfolder is provided' do
       describe 'the collection has files' do
-        let(:aws_response) {
+        let(:blob_storage_response) {
           <<-XML
-<?xml version="1.0" encoding="UTF-8"?>
-<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-    <Name>bucket</Name>
-    <KeyCount>2</KeyCount>
-    <Contents>
-        <Key>12345/solicitor.docx</Key>
-        <LastModified>2016-10-12T17:50:30.000Z</LastModified>
-    </Contents>
-    <Contents>
-        <Key>12345/hmrc_appeal.docx</Key>
-        <LastModified>2016-10-12T17:50:30.000Z</LastModified>
-    </Contents>
-</ListBucketResult>
+<?xml version="1.0" encoding="utf-8"?>
+<EnumerationResults ServiceEndpoint="https://dummy-account.blob.core.windows.net/" ContainerName="dummy-container">
+  <Blobs>
+    <Blob>
+      <Name>12345/solicitor.docx</Name>
+      <Properties>
+        <Last-Modified>Mon, 04 Nov 2019 12:30:14 GMT</Last-Modified>
+      </Properties>
+    </Blob>
+    <Blob>
+      <Name>12345/hmrc_appeal.docx</Name>
+      <Properties>
+        <Last-Modified>Mon, 04 Nov 2019 13:34:37 GMT</Last-Modified>
+      </Properties>
+    </Blob>
+  </Blobs>
+  <NextMarker />
+</EnumerationResults>
           XML
         }
 
@@ -87,12 +100,12 @@ RSpec.describe MojFile::List do
               {
                 key: '12345/solicitor.docx',
                 title: 'solicitor.docx',
-                last_modified: '2016-10-12T17:50:30.000Z'
+                last_modified: 'Mon, 04 Nov 2019 12:30:14 GMT'
               },
               {
                 key: '12345/hmrc_appeal.docx',
                 title: 'hmrc_appeal.docx',
-                last_modified: '2016-10-12T17:50:30.000Z'
+                last_modified: 'Mon, 04 Nov 2019 13:34:37 GMT'
               }
           ],
           action: 'List'
@@ -112,13 +125,13 @@ RSpec.describe MojFile::List do
     end
 
     describe 'the collection is empty' do
-      let(:aws_response) {
+      let(:blob_storage_response) {
         <<-XML
-<?xml version="1.0" encoding="UTF-8"?>
-<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-    <Name>bucket</Name>
-    <KeyCount>0</KeyCount>
-</ListBucketResult>
+<?xml version="1.0" encoding="utf-8"?>
+<EnumerationResults ServiceEndpoint="https://dummy-account.blob.core.windows.net/" ContainerName="empty-container">
+  <Blobs />
+  <NextMarker />
+</EnumerationResults>
         XML
       }
 

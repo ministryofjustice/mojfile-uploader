@@ -3,7 +3,7 @@ require_relative '../spec_helper'
 RSpec.describe MojFile::Add do
   let(:encoded_file_data) { 'QSBkb2N1bWVudCBib2R5\n' }
   let(:decoded_file_data) { 'A document body' }
-  let(:bucket_name) { 'uploader-test-bucket' }
+  let(:container_name) { 'dummy-container' }
   let(:scanner_url) { 'http://my-test-scanner' }
 
   let(:params) {
@@ -16,12 +16,12 @@ RSpec.describe MojFile::Add do
 
   before do
     allow(SecureRandom).to receive(:uuid).and_return(12345)
-    allow(ENV).to receive(:fetch).with('BUCKET_NAME').and_return(bucket_name)
+    allow(ENV).to receive(:fetch).with('CONTAINER_NAME').and_return(container_name)
     allow(ENV).to receive(:fetch).with('SCANNER_URL', 'http://clamav-rest:8080/scan').and_return(scanner_url)
   end
 
-  let!(:s3_stub) {
-    stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/12345\/subfolder\/testfile.docx/).
+  let!(:blob_storage_stub) {
+    stub_request(:put, /dummy-account.blob.core.windows\.net\/dummy-container\/12345\/subfolder\/testfile.docx/).
       with(body: decoded_file_data)
   }
 
@@ -34,9 +34,9 @@ RSpec.describe MojFile::Add do
 
   context 'successfully adding a file' do
     context 'generating a new collection_reference' do
-      it 'uploads the file to s3' do
+      it 'uploads the file to azure blob storage' do
         post '/new', params.to_json
-        expect(s3_stub).to have_been_requested
+        expect(blob_storage_stub).to have_been_requested
       end
 
       it 'sends the file file to the av service for scanning' do
@@ -69,7 +69,7 @@ RSpec.describe MojFile::Add do
 
     context 'without a folder' do
       before do
-        stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/ABC123\/testfile.docx/)
+        stub_request(:put, /dummy-account.blob.core.windows\.net\/dummy-container\/ABC123\/testfile.docx/)
       end
 
       let(:params) { super().merge('folder' => nil) }
@@ -89,7 +89,7 @@ RSpec.describe MojFile::Add do
 
     context 'reusing a collection_reference' do
       before do
-        stub_request(:put, /uploader-test-bucket.+s3.+amazonaws\.com\/ABC123\/subfolder\/testfile.docx/)
+        stub_request(:put, /dummy-account.blob.core.windows\.net\/dummy-container\/ABC123\/subfolder\/testfile.docx/)
       end
 
       it 'returns a 200' do
