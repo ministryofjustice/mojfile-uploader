@@ -21,7 +21,7 @@ module MojFile
               detected_infected_file: checks[:detected_infected_file],
               passed_clean_file: checks[:passed_clean_file]
             },
-            s3: {
+            blob_storage: {
               write_test: checks[:write_test]
             }
           }
