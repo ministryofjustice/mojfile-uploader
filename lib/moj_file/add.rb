@@ -1,6 +1,8 @@
 require 'securerandom'
 require 'base64'
 require 'sanitize'
+require 'mimemagic'
+require 'mimemagic/overlay'
 
 module MojFile
   class Add
@@ -30,7 +32,8 @@ module MojFile
     end
 
     def upload
-      storage.create_block_blob(container_name, blob_name, decoded_file_data).tap { log_result }
+      options = { content_type: lookup_mime_type }
+      storage.create_block_blob(container_name, blob_name, decoded_file_data, options).tap { log_result }
     rescue => error
       log_result(error: error.inspect, backtrace: error.backtrace)
       raise
@@ -89,6 +92,10 @@ module MojFile
         e << 'file_filename must be provided' if filename.empty?
         e << 'file_data must be provided' if file_data.empty?
       }
+    end
+
+    def lookup_mime_type
+      MimeMagic.by_path(blob_name).type
     end
   end
 end

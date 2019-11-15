@@ -8,7 +8,7 @@ RSpec.shared_examples 'common logging actions' do |log_level|
   end
 
   it 'logs the filename' do
-    expect(logger).to receive(log_level).with(hash_including(filename: 'ABC123/some_folder/testfile.docx'))
+    expect(logger).to receive(log_level).with(hash_including(filename: 'ABC123/some_folder/testfile.pdf'))
     subject.upload rescue StandardError
   end
 
@@ -23,7 +23,7 @@ RSpec.describe MojFile::Add, '#upload' do
   let(:decoded_file_data) { 'A document body' }
   let(:params) {
     {
-      'file_filename' => 'testfile.docx',
+      'file_filename' => 'testfile.pdf',
       'folder' => 'some_folder',
       'file_data' => encoded_file_data
     }
@@ -31,7 +31,7 @@ RSpec.describe MojFile::Add, '#upload' do
 
   let(:blob_storage_response) { double.as_null_object }
   let(:container_name) { 'dummy-container' }
-  let(:blob_name) { 'ABC123/some_folder/testfile.docx' }
+  let(:blob_name) { 'ABC123/some_folder/testfile.pdf' }
 
   subject {
     described_class.new(collection_ref: nil, params: params)
@@ -42,7 +42,7 @@ RSpec.describe MojFile::Add, '#upload' do
   end
 
   it 'puts the decoded file data to the container' do
-    expect(blob_storage_response).to receive(:create_block_blob).with(container_name, blob_name, 'A document body').and_return(Azure::Storage::Blob::Blob)
+    expect(blob_storage_response).to receive(:create_block_blob).with(container_name, blob_name, 'A document body', {:content_type=>"application/pdf"}).and_return(Azure::Storage::Blob::Blob)
     allow(subject).to receive(:storage).and_return(blob_storage_response)
     subject.upload
   end
