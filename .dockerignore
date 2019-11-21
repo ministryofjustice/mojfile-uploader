@@ -1,0 +1,9 @@
+.git*
+log/*
+tmp/*
+.travis.yml
+Dockerfile
+Dockerfile.development
+docker-compose.yml
+azure-pipelines.yaml
+pipeline-steps/*

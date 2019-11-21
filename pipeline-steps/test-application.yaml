@@ -1,0 +1,25 @@
+parameters:
+  rubyVersion: ''
+  bundlerVersion: ''
+
+
+steps:
+- task: UseRubyVersion@0
+  inputs:
+    versionSpec: '$(rubyVersion)'
+
+- script: |
+    gem install bundler -v $(bundlerVersion)
+  displayName: 'install bundler'
+
+- script: |
+    bundle install --retry=3 --jobs=4
+  displayName: 'bundle install'
+
+- script: |
+    bundle exec rubocop --fail-fast
+  displayName: 'test rubocop'
+  
+- script: |
+    bundle exec rspec --fail-fast --format documentation --format RspecJunitFormatter --out test-rspec.xml
+  displayName: 'test rspec'
