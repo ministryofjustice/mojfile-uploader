@@ -1,18 +1,30 @@
-FROM ministryofjustice/ruby:2.5.3-webapp-onbuild
+FROM employmenttribunal.azurecr.io/ruby25-onbuild:0.4
 
-ENV PUMA_PORT 9292
-ENV RACK_ENV production
+# Adding argument support for ping.json
+ARG APP_VERSION=unknown
+ARG APP_BUILD_DATE=unknown
+ARG APP_GIT_COMMIT=unknown
+ARG APP_BUILD_TAG=unknown
 
-ENV BUCKET_NAME replace_this_at_build_time
-ENV SCANNER_URL replace_this_at_build_time
-ENV SENTRY_DSN  replace_this_at_build_time
+# Setting up ping.json variables
+ENV APP_VERSION ${APP_VERSION}
+ENV APP_BUILD_DATE ${APP_BUILD_DATE}
+ENV APP_GIT_COMMIT ${APP_GIT_COMMIT}
+ENV APP_BUILD_TAG ${APP_BUILD_TAG}
 
-RUN touch /etc/inittab
+# fix to address http://tzinfo.github.io/datasourcenotfound - PET ONLY
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -q && \
+    apt-get install -qy tzdata --no-install-recommends && apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && rm -fr *Release* *Sources* *Packages* && \
+    truncate -s 0 /var/log/*log
 
-RUN rm /etc/apt/sources.list.d/nodesource.list
-
-RUN apt-get update && apt-get install -y
-
+ENV PUMA_PORT 8000
 EXPOSE $PUMA_PORT
 
-ENTRYPOINT ["./run.sh"]
+# running app as a servive
+ENV PHUSION true
+RUN mkdir /etc/service/app
+COPY run.sh /etc/service/app/run
+RUN chmod +x /etc/service/app/run
+
