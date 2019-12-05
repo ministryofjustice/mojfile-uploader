@@ -96,6 +96,8 @@ module MojFile
 
     def lookup_mime_type
       MimeMagic.by_path(blob_name).type
+    rescue => error
+      log_result(error: error.inspect, backtrace: error.backtrace)
     end
   end
 end
