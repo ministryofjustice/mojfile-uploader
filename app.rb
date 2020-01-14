@@ -30,6 +30,7 @@ module MojFile
     end
 
     get '/:collection_ref/?:folder?' do |collection_ref, folder|
+      logger.info("Received request to list #{collection_ref}/#{folder} folder")
       list = List.call(collection_ref, folder: folder, logger: logger)
 
       if list.files?
@@ -87,6 +88,7 @@ module MojFile
 
       def logger_config
         env = ENV['RACK_ENV']
+
         defaults = {
           formatter: :json_lines,
           customize_event: Proc.new{ |event| event['tags'] = ['moj_uploader'] }
