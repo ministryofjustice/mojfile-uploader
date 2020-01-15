@@ -18,7 +18,7 @@ module MojFile
     end
 
     def files
-      log_result("Retrieving files #{prefix} from Azure Blob Storage")
+      log_result({ message: "Retrieving files #{prefix} from Azure Blob Storage" })
 
       {
         collection: collection,
