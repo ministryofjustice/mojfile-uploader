@@ -18,7 +18,7 @@ module MojFile
     end
 
     def files
-      log_result({ message: "Retrieving files #{prefix} from Azure Blob Storage" })
+      logger.info("Looking for files with prefix #{prefix} in Azure Blob Storage")
 
       {
         collection: collection,

@@ -34,6 +34,8 @@ module MojFile
       list = List.call(collection_ref, folder: folder, logger: logger)
 
       if list.files?
+        logger.info("The files found in #{collection_ref}/#{folder} are: #{list.files.to_json}")
+
         status(200)
         body(list.files.to_json)
       else
