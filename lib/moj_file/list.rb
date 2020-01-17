@@ -1,3 +1,5 @@
+require 'benchmark'
+
 module MojFile
   class List
     include MojFile::AzureBlobStorage
@@ -18,8 +20,6 @@ module MojFile
     end
 
     def files
-      logger.info("Looking for files with prefix #{prefix} in Azure Blob Storage")
-
       {
         collection: collection,
         folder: folder,
@@ -55,7 +55,14 @@ module MojFile
     end
 
     def blobs
-      @blobs ||= storage.list_blobs(container_name, prefix: prefix)
+      @logger.info("[Uploader] Looking for files with prefix #{prefix} in Azure Blob Storage")
+
+      time = Benchmark.measure do
+        @blobs ||= storage.list_blobs(container_name, prefix: prefix)
+      end
+      @logger.info("[Uploader] Benchmarking 'storage.list_blobs()': #{time} ")
+
+      return @blobs
     end
   end
 end
