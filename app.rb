@@ -30,7 +30,7 @@ module MojFile
     end
 
     get '/:collection_ref/?:folder?' do |collection_ref, folder|
-      logger.info("Received request to list #{collection_ref}/#{folder} folder")
+      logger.info("[Uploader] Received request to list #{collection_ref}/#{folder} folder")
       list = List.call(collection_ref, folder: folder, logger: logger)
 
       if list.files?
