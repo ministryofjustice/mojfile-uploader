@@ -10,6 +10,10 @@ module MojFile
       set :raise_errors, false
     end
 
+    get '/ping.?:format?' do
+      return 200
+    end
+
     get '/status.?:format?' do
       checks = statuschecks
       {
