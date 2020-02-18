@@ -8,6 +8,7 @@ end
 
 ruby '2.5.7'
 
+gem 'application_insights', '~> 0.5.6'
 gem 'azure-storage-blob', '~> 1.1'
 gem 'azure_env_secrets', github: 'ministryofjustice/azure_env_secrets', tag: 'v0.1.3'
 gem 'logstash-logger'
