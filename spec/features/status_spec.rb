@@ -10,13 +10,13 @@ RSpec.describe 'Parsed status response' do
     allow(MojFile::Add).to receive(:write_test)
     allow(MojFile::Scan).to receive(:statuscheck_clean)
     allow(MojFile::Scan).to receive(:statuscheck_infected)
-    allow_any_instance_of(MojFile::Uploader).to receive(:`).and_return('ABC123')
+    allow(ENV).to receive(:[]).with('APP_VERSION').and_return('a8c1b23')
   end
 
   context 'version' do
     specify do
       get '/status'
-      expect(resp).to include(version: 'ABC123')
+      expect(resp).to include(version: 'a8c1b23')
     end
   end
 
