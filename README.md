@@ -103,8 +103,10 @@ delete blob.
 
 ## Note on Azure Storage Credentials
 
-They are picked up automatically by the `azure-storage-blob` gem if you use the environment
-variables set in `env.example`.
+The `azure-storage-blob` gem will use the following ENV vars by default:
+
+- AZURE_STORAGE_ACCOUNT
+- AZURE_STORAGE_ACCESS_KEY
 
 ## Run Locally
 
@@ -132,7 +134,7 @@ The AV scanner must be running before you start the uploader.
 dotenv rackup
 ```
 
-To skip the AV scanning, run instead:
+To skip the AV scanning, run:
 
 ```
 DO_NOT_SCAN=true dotenv rackup
