@@ -5,9 +5,9 @@ RSpec.describe MojFile::List do
 
   let(:collection_ref) { '12345' }
   let(:folder) { 'subfolder' }
-  let(:s3) { instance_double(Aws::S3::Resource, bucket: bucket) }
-  let(:bucket) { double('Bucket', objects: objects) }
-  let(:objects) { [double('Object', key: '12345/subfolder/test123.txt', last_modified: '2016-12-01T16:26:44.000Z')] }
+  let(:storage) { instance_double(Azure::Storage::Blob::BlobService, list_blobs: blobs) }
+  let(:container_name) { 'dummy-container' }
+  let(:blobs) { [double('Blob', name: '12345/subfolder/test123.txt', properties:  { last_modified: '2016-12-01T16:26:44.000Z' })] }
 
   subject { described_class.new(collection_ref, folder: folder) }
 
@@ -19,7 +19,7 @@ RSpec.describe MojFile::List do
 
   describe '#files' do
     before do
-      allow(subject).to receive(:s3).and_return(s3)
+      allow(subject).to receive(:storage).and_return(storage)
     end
 
     let(:expected_files_hash) {
@@ -33,8 +33,8 @@ RSpec.describe MojFile::List do
       }
     }
 
-    it 'list S3 bucket objects by their collection reference including a trailing slash' do
-      expect(bucket).to receive(:objects).with(prefix: '12345/subfolder/')
+    it 'list Azure Blob Storage container blobs by their collection reference including a trailing slash' do
+      expect(storage).to receive(:list_blobs).with(container_name, prefix: '12345/subfolder/')
       files = subject.files
       expect(files).to eq(expected_files_hash)
     end
@@ -50,11 +50,11 @@ RSpec.describe MojFile::List do
           action: 'List'
         }
       }
-      let(:objects) { [double('Object', key: '12345/test123.txt', last_modified: '2016-12-01T16:26:44.000Z')] }
+      let(:blobs) { [double('Blob', name: '12345/test123.txt', properties:  { last_modified: '2016-12-01T16:26:44.000Z' })] }
       let(:folder) { nil }
 
-      it 'list S3 bucket objects by their collection reference including a trailing slash' do
-        expect(bucket).to receive(:objects).with(prefix: '12345/')
+      it 'list Azure Blob Storage container blobs by their collection reference including a trailing slash' do
+        expect(storage).to receive(:list_blobs).with(container_name, prefix: '12345/')
         files = subject.files
         expect(files).to eq(expected_files_hash)
       end
@@ -69,7 +69,7 @@ RSpec.describe MojFile::List do
 
       it 'catches and re-raises errors' do
         expect(logger).to receive(:error).with(hash_including(error: /ExampleError/, backtrace: a_kind_of(Array)))
-        expect(bucket).to receive(:objects).and_raise(ExampleError)
+        expect(storage).to receive(:list_blobs).and_raise(ExampleError)
         expect { subject.files }.to raise_error(ExampleError)
       end
     end

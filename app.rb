@@ -10,6 +10,10 @@ module MojFile
       set :raise_errors, false
     end
 
+    get '/ping.?:format?' do
+      return 200
+    end
+
     get '/status.?:format?' do
       checks = statuschecks
       {
@@ -21,7 +25,7 @@ module MojFile
               detected_infected_file: checks[:detected_infected_file],
               passed_clean_file: checks[:passed_clean_file]
             },
-            s3: {
+            blob_storage: {
               write_test: checks[:write_test]
             }
           }
@@ -126,13 +130,7 @@ module MojFile
       end
 
       def version
-        # This has been manually checked in a demo app in a docker container running
-        # ruby:latest with Docker 1.12. Ymmv, however; in particular it may not
-        # work on alpine-based containers.
-        # NOTE:  This will always work on specs that are run in a git repo.  It
-        # should be stubbed at this level if you need a to test it.   See
-        # `spec/features/status_spec.rb` for an example.
-        `git rev-parse HEAD`.chomp
+        ENV['APP_VERSION']
       end
     end
   end

@@ -4,19 +4,19 @@ RSpec.describe 'Parsed status response' do
   let(:resp) { JSON.parse(last_response.body, symbolize_names: true) }
 
   let(:av) { resp[:dependencies][:external][:av] }
-  let(:s3) { resp[:dependencies][:external][:s3] }
+  let(:blob_storage) { resp[:dependencies][:external][:blob_storage] }
 
   before do
     allow(MojFile::Add).to receive(:write_test)
     allow(MojFile::Scan).to receive(:statuscheck_clean)
     allow(MojFile::Scan).to receive(:statuscheck_infected)
-    allow_any_instance_of(MojFile::Uploader).to receive(:`).and_return('ABC123')
+    allow(ENV).to receive(:[]).with('APP_VERSION').and_return('a8c1b23')
   end
 
   context 'version' do
     specify do
       get '/status'
-      expect(resp).to include(version: 'ABC123')
+      expect(resp).to include(version: 'a8c1b23')
     end
   end
 
@@ -71,7 +71,7 @@ RSpec.describe 'Parsed status response' do
     specify do
       expect(MojFile::Add).to receive(:write_test).and_return(true)
       get '/status'
-      expect(s3).to include(write_test: 'ok')
+      expect(blob_storage).to include(write_test: 'ok')
     end
   end
 
@@ -86,7 +86,7 @@ RSpec.describe 'Parsed status response' do
     end
 
     specify do
-      expect(s3).to include(write_test: 'failed')
+      expect(blob_storage).to include(write_test: 'failed')
     end
   end
 end

@@ -1,6 +1,6 @@
 module MojFile
   class List
-    include MojFile::S3
+    include MojFile::AzureBlobStorage
     include MojFile::Logging
 
     ACTION_NAME = 'List'
@@ -29,17 +29,17 @@ module MojFile
     end
 
     def files?
-      !objects.empty?
+      !blobs.empty?
     end
 
     private
 
     def map_files
-      objects.map{ |o|
+      blobs.map{ |o|
         {
-          key: o.key,
-          title: o.key.sub(prefix,''),
-          last_modified: o.last_modified
+          key: o.name,
+          title: o.name.sub(prefix,''),
+          last_modified: o.properties[:last_modified]
         }
       }
     end
@@ -48,12 +48,12 @@ module MojFile
       [collection, folder].compact.join('/') + '/'
     end
 
-    def bucket_name
-      ENV.fetch('BUCKET_NAME')
+    def container_name
+      ENV.fetch('CONTAINER_NAME')
     end
 
-    def objects
-      @objects ||= s3.bucket(bucket_name).objects(prefix: prefix).to_set
+    def blobs
+      @blobs ||= storage.list_blobs(container_name, prefix: prefix)
     end
   end
 end

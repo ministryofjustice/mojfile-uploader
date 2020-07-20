@@ -3,7 +3,7 @@
 # Script to test the file uploader application. Replace the URL with wherever the
 # uploader application should be, from your point of view
 
-UPLOADER_URL=http://localhost:9292
+UPLOADER_URL=http://localhost:8000
 COLLECTION_REF=12345
 
 main() {
