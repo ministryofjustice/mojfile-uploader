@@ -9,23 +9,23 @@ trigger:
   batch: true
   branches:
     include:
-      - develop
+      - master
   tags:
     include:
     - v*
 
-      
+
 pr:
   autoCancel: true
   branches:
     include:
-      - develop
+      - master
       - feature/*
 
 variables:
   application.name: 'tt-uploader'
   azure.subscription.endpoint: 'hmcts-pet'
-  manual.branch.prefix: 'develop'
+  manual.branch.prefix: 'master'
 
 # resources:
   # containers:
@@ -51,7 +51,7 @@ jobs:
   - job: BuildAndPushImageCI
 
     dependsOn: TestApplication
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), not(startsWith(variables['Build.SourceBranch'], 'refs/tags/')), ne(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), not(startsWith(variables['Build.SourceBranch'], 'refs/tags/')), ne(variables['Build.Reason'], 'Manual'))
     pool:
       name: hmcts-pet
 
@@ -79,7 +79,7 @@ jobs:
 
 
   - job: BuildAndPushImageManual
-  
+
     dependsOn: TestApplication
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
     pool:
