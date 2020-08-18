@@ -76,7 +76,7 @@ module MojFile
 
     def sanitize(value)
       Sanitize.fragment(value).
-      gsub(' ','_').
+      tr(' ','_').
       gsub('*', '&#42;').
       gsub('=', '&#61;').
       gsub('%', '&#37;').
