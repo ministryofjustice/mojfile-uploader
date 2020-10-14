@@ -24,6 +24,7 @@ RSpec.describe MojFile::Add do
 
   describe '#filename' do
     let(:value) { double.as_null_object }
+    let(:filename) { '@#I$M^G &?(}-"acv_9703[*%=.5102]' }
 
     # Mutant kill
     specify 'returns an empty string if not passed in' do
@@ -37,22 +38,9 @@ RSpec.describe MojFile::Add do
       described_class.new(collection_ref: nil, params: params)
     end
 
-    specify 'scrubs *' do
-      allow(Sanitize).to receive(:fragment).and_return(value)
-      expect(value).to receive(:gsub).with('*', anything)
-      described_class.new(collection_ref: nil, params: params)
-    end
-
-    specify 'scrubs =' do
-      allow(Sanitize).to receive(:fragment).and_return(value)
-      expect(value).to receive(:gsub).with('=', anything)
-      described_class.new(collection_ref: nil, params: params)
-    end
-
-    specify 'scrubs %' do
-      allow(Sanitize).to receive(:fragment).and_return(value)
-      expect(value).to receive(:gsub).with('%', anything)
-      described_class.new(collection_ref: nil, params: params)
+    specify 'scrubs special characters except ._-' do
+      moj_file_add = described_class.new(collection_ref: nil, params: params)
+      expect(moj_file_add.filename).to eq "IMGamp-acv_9703.5102"
     end
 
     specify 'removes `drop table` case-insensitively'do
