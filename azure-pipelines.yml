@@ -10,6 +10,8 @@ trigger:
   branches:
     include:
       - master
+      - feature/*
+      - bugfix/*
   tags:
     include:
     - v*
