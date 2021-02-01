@@ -54,11 +54,21 @@ RSpec.describe MojFile::Add do
       expect(value).to receive(:gsub).with(/insert\s+into/i, anything)
       described_class.new(collection_ref: nil, params: params)
     end
+
+    context 'Welsh characters' do
+      let(:filename) { '@#I$M^G &?(}-"âêîôûÚÙŵŷ[*%=.51ȳ02]' }
+
+      it 'translate them to english letters' do
+        moj_file_add = described_class.new(collection_ref: nil, params: params)
+        expect(moj_file_add.filename).to eq "IMGamp-aeiouUUwy.51y02"
+      end
+    end
   end
 
   describe '#scan_clear?' do
     let(:scanner_instance) { double.as_null_object }
     subject { described_class.new(collection_ref: nil, params: params) }
+    before { ENV['DO_NOT_SCAN'] = nil }
 
     specify 'it creates a new instance of the scanner' do
       expect(scanner).to receive(:new).
