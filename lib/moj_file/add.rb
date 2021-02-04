@@ -75,7 +75,7 @@ module MojFile
     end
 
     def sanitize(value)
-      filename = value.gsub(Regexp.union(welsh_chars_list.keys), welsh_chars_list)
+      filename = value.unicode_normalize(:nfkd)
       Sanitize.fragment(filename).
       gsub(/[^0-9a-zA-Z\.\-\_]/, '').
       gsub(/drop\s+table/i, '').
@@ -102,17 +102,5 @@ module MojFile
     rescue => error
       log_result(error: error.inspect, backtrace: error.backtrace)
     end
-
-    def welsh_chars_list
-      { 'Â' => 'A', 'Ê' => 'E', 'Î' => 'I', 'Ô' => 'O', 'Û' => 'U',  'Ŷ' => 'Y', 'Ŵ' => 'W', 'â' => 'a',
-      'ê' => 'e', 'î' => 'i', 'ô' => 'o', 'û' => 'u', 'ŷ' => 'y', 'ŵ' => 'w', 'Á' => 'A', 'É' => 'E', 'Í' => 'I',
-      'Ó' => 'O', 'Ú' => 'U', 'Ý' => 'Y', 'Ẃ' => 'W', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ý' => 'y',
-      'ẃ' => 'w', 'Ä' => 'A', 'Ë' => 'E', 'Ï' => 'I', 'Ö' => 'O', 'Ü' => 'U', 'Ÿ' => 'Y', 'Ẅ' => 'W', 'ä' => 'a',
-      'ë' => 'e', 'ï' => 'i', 'ö' => 'o', 'ü' => 'u', 'ÿ' => 'y', 'ẅ' => 'w', 'À' => 'A', 'È' => 'E', 'Ì' => 'I',
-      'Ò' => 'O', 'Ù' => 'U', 'Ù' => 'U', 'Ẁ' => 'W', 'à' => 'a', 'è' => 'e', 'ì' => 'i', 'ò' => 'o', 'ù' => 'u',
-      'ẁ' => 'w', 'Ā' => 'A', 'Ē' => 'E', 'Ī' => 'I', 'Ō' => 'O', 'Ū' => 'U', 'Ȳ' => 'Y', 'ā' => 'a','ē' => 'e',
-      'ī' => 'i', 'ō' => 'o', 'ū' => 'u', 'ȳ' => 'y'}
-    end
-
   end
 end
