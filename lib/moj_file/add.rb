@@ -75,10 +75,15 @@ module MojFile
     end
 
     def sanitize(value)
-      Sanitize.fragment(value).
+      filename = value.unicode_normalize(:nfkd)
+      Sanitize.fragment(filename).
       gsub(/[^0-9a-zA-Z\.\-\_]/, '').
       gsub(/drop\s+table/i, '').
       gsub(/insert\s+into/i, '')
+    end
+
+    def welsh_to_english_characters
+      word
     end
 
     def decoded_file_data
