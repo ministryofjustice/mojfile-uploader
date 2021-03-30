@@ -1,4 +1,4 @@
-FROM employmenttribunal.azurecr.io/ruby25-onbuild:0.4
+FROM phusion/passenger-ruby27
 
 # Adding argument support for ping.json
 ARG APP_VERSION=unknown
@@ -15,16 +15,20 @@ ENV APP_BUILD_TAG ${APP_BUILD_TAG}
 # fix to address http://tzinfo.github.io/datasourcenotfound - PET ONLY
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -q && \
-    apt-get install -qy tzdata --no-install-recommends && apt-get clean && \
+    apt-get install shared-mime-info -qy tzdata --no-install-recommends && apt-get clean && \
     rm -rf /var/lib/apt/lists/* && rm -fr *Release* *Sources* *Packages* && \
     truncate -s 0 /var/log/*log
+
+COPY . /home/app
+WORKDIR /home/app
+
+RUN gem install bundler -v 2.2.15
+RUN bundle install --without test development
 
 ENV PUMA_PORT 8000
 EXPOSE $PUMA_PORT
 
 # running app as a servive
 ENV PHUSION true
-RUN mkdir /etc/service/app
-COPY run.sh /etc/service/app/run
-RUN chmod +x /etc/service/app/run
-
+COPY run.sh /home/app/run
+RUN chmod +x /home/app/run

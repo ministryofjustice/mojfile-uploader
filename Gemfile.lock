@@ -75,7 +75,9 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    mimemagic (0.3.3)
+    mimemagic (0.3.10)
+      nokogiri (~> 1)
+      rake
     mini_portile2 (2.5.0)
     morpher (0.2.6)
       abstract_type (~> 0.0.7)
@@ -239,7 +241,7 @@ DEPENDENCIES
   webmock
 
 RUBY VERSION
-   ruby 2.5.7p206
+   ruby 2.7.2p137
 
 BUNDLED WITH
-   1.17.3
+   2.2.15
