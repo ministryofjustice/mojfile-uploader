@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Load ENV variables from the Azure Key Vault
 require 'azure_env_secrets'
 ::AzureEnvSecrets.load

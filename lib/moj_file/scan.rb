@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rest_client'
 require_relative 'dummy_path'
 require 'pp'
@@ -6,7 +8,7 @@ module MojFile
   class Scan
     include MojFile::Logging
     # clamav-rest is remapped in docker-compose.yml
-    DEFAULT_SCANNER_URL = 'http://clamav-rest:8080/scan'.freeze
+    DEFAULT_SCANNER_URL = 'http://clamav-rest:8080/scan'
     EICAR_TEST = 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*'
     CLEAN_TEST = 'clear test file'
     ACTION_NAME = 'Scan'
@@ -22,8 +24,8 @@ module MojFile
 
     def scan_clear?
       post.body.match(/true/)
-    rescue => error
-      log_result(error: error.inspect, backtrace: error.backtrace)
+    rescue StandardError => e
+      log_result(error: e.inspect, backtrace: e.backtrace)
       raise
     end
 

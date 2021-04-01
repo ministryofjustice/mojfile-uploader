@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'mojfile_uploader_api_client'
 require 'sinatra'
 require_relative 'app'

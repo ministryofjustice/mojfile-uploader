@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MojFile
   class Delete
     include MojFile::AzureBlobStorage
@@ -6,9 +8,9 @@ module MojFile
     ACTION_NAME = 'Delete'
 
     attr_accessor :collection,
-      :folder,
-      :filename,
-      :logger
+                  :folder,
+                  :filename,
+                  :logger
 
     def self.delete!(*args)
       new(*args).delete!
