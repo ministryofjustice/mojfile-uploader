@@ -26,6 +26,7 @@ variables:
   application.name: 'tt-uploader'
   azure.subscription.endpoint: 'hmcts-pet'
   manual.branch.prefix: 'master'
+  azure.container.registry: 'employmenttribunal.azurecr.io'
 
 # resources:
   # containers:
@@ -41,7 +42,7 @@ jobs:
 
     variables:
       rubyVersion: '= 2.7.3'
-      bundlerVersion: '2.2.15'
+      bundlerVersion: '2.2.4'
 
     steps:
     # - template: ./pipeline-steps/test-application.yaml
