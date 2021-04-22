@@ -40,8 +40,8 @@ jobs:
       vmImage: 'Ubuntu-16.04'
 
     variables:
-      rubyVersion: '= 2.5.5'
-      bundlerVersion: '1.17.3'
+      rubyVersion: '= 2.7.3'
+      bundlerVersion: '2.2.15'
 
     steps:
     # - template: ./pipeline-steps/test-application.yaml

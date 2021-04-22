@@ -1,1 +1,87 @@
-inherit_from: .rubocop_todo.yml
+AllCops:
+  TargetRubyVersion: 2.7
+  Exclude:
+    - './*'
+    - 'example_app/**/*'
+    - 'lib/tasks/**/*'
+    - 'spec/**/*'
+
+####################################
+## Customization for this project ##
+####################################
+
+ClassLength:
+  Max: 130
+
+LineLength:
+  Max: 145
+
+MethodLength:
+  Max: 30
+
+BlockLength:
+  Max: 139
+
+AbcSize:
+  Max: 35
+
+CyclomaticComplexity:
+  Max: 12
+
+Documentation:
+  Enabled: false
+
+FrozenStringLiteralComment:
+  Enabled: false
+
+SymbolArray:
+  Enabled: false
+
+SpaceInsideHashLiteralBraces:
+  Enabled: false
+
+PredicateName:
+  Enabled: false
+
+MultilineIfModifier:
+  Enabled: false
+
+Layout/HashAlignment:
+  Enabled: false
+
+IfUnlessModifier:
+  Enabled: false
+
+StringLiterals:
+  Enabled: false
+
+TrailingCommaInArrayLiteral:
+  Enabled: false
+
+TrailingCommaInHashLiteral:
+  Enabled: false
+
+TrailingCommaInArguments:
+  Enabled: false
+
+MultilineMethodCallIndentation:
+  Enabled: false
+
+EmptyLineAfterGuardClause:
+  Enabled: false
+
+RescuedExceptionsVariableName:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+AsciiComments:
+  Exclude:
+    - 'lib/moj_file/dummy_path.rb'
+
+FormatStringToken:
+  EnforcedStyle: unannotated
