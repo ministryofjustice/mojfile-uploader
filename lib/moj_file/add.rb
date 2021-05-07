@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 require 'base64'
 require 'sanitize'
@@ -12,12 +14,12 @@ module MojFile
     ACTION_NAME = 'Add'
 
     attr_accessor :collection,
-      :errors,
-      :file_data,
-      :filename,
-      :folder,
-      :logger,
-      :scanner
+                  :errors,
+                  :file_data,
+                  :filename,
+                  :folder,
+                  :logger,
+                  :scanner
 
     def initialize(collection_ref:, params:, logger: DummyLogger.new)
       @collection = collection_ref || SecureRandom.uuid
@@ -34,8 +36,8 @@ module MojFile
     def upload
       options = { content_type: lookup_mime_type }
       storage.create_block_blob(container_name, blob_name, decoded_file_data, options).tap { log_result }
-    rescue => error
-      log_result(error: error.inspect, backtrace: error.backtrace)
+    rescue StandardError => e
+      log_result(error: e.inspect, backtrace: e.backtrace)
       raise
     end
 
@@ -50,6 +52,7 @@ module MojFile
       # breaking in the Heroku demo environment, which cannot run/access the
       # virus scanning container.
       return true if ENV['DO_NOT_SCAN']
+
       scanner.new(filename: filename, data: decoded_file_data, logger: logger).scan_clear?
     end
 
@@ -57,9 +60,9 @@ module MojFile
       # Errors get logged in `#upload`
       new(collection_ref: 'status',
           params: {
-        'file_filename' => 'status.docx',
-        'file_data' => 'QSBkb2N1bWVudCBib2R5' }
-         ).upload
+            'file_filename' => 'status.docx',
+            'file_data' => 'QSBkb2N1bWVudCBib2R5'
+          }).upload
     end
 
     private
@@ -76,10 +79,10 @@ module MojFile
 
     def sanitize(value)
       filename = value.unicode_normalize(:nfkd)
-      Sanitize.fragment(filename).
-      gsub(/[^0-9a-zA-Z\.\-\_]/, '').
-      gsub(/drop\s+table/i, '').
-      gsub(/insert\s+into/i, '')
+      Sanitize.fragment(filename)
+              .gsub(/[^0-9a-zA-Z.\-_]/, '')
+              .gsub(/drop\s+table/i, '')
+              .gsub(/insert\s+into/i, '')
     end
 
     def welsh_to_english_characters
@@ -91,16 +94,16 @@ module MojFile
     end
 
     def validate
-      errors.tap { |e|
+      errors.tap do |e|
         e << 'file_filename must be provided' if filename.empty?
         e << 'file_data must be provided' if file_data.empty?
-      }
+      end
     end
 
     def lookup_mime_type
       MimeMagic.by_path(blob_name).type
-    rescue => error
-      log_result(error: error.inspect, backtrace: error.backtrace)
+    rescue StandardError => e
+      log_result(error: e.inspect, backtrace: e.backtrace)
     end
   end
 end

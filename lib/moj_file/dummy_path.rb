@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # RestClient won’t treat a StringIO object as a file for the purpose of
 # a multipart form field, as StringIO doesn’t respond to `#path`.
 # This works around this problem by including a dummy path method.

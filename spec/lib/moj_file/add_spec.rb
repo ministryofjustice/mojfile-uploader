@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe MojFile::Add do
@@ -6,19 +8,19 @@ RSpec.describe MojFile::Add do
   let(:filename) { 'testfile.docx' }
   let(:scanner) { double.as_null_object }
 
-  let(:params) {
+  let(:params) do
     {
       'file_filename' => filename,
       'folder' => 'some_folder',
       'file_data' => encoded_file_data,
       'scanner' => scanner
     }
-  }
+  end
 
   describe '#upload' do
     it 're-raises the error' do
-      stub_request(:put, /\/status\/status\.docx/).to_return(status: 422)
-      expect{ described_class.write_test }.to raise_error(StandardError)
+      stub_request(:put, %r{/status/status\.docx}).to_return(status: 422)
+      expect { described_class.write_test }.to raise_error(StandardError)
     end
   end
 
@@ -40,16 +42,16 @@ RSpec.describe MojFile::Add do
 
     specify 'scrubs special characters except ._-' do
       moj_file_add = described_class.new(collection_ref: nil, params: params)
-      expect(moj_file_add.filename).to eq "IMGamp-acv_9703.5102"
+      expect(moj_file_add.filename).to eq 'IMGamp-acv_9703.5102'
     end
 
-    specify 'removes `drop table` case-insensitively'do
+    specify 'removes `drop table` case-insensitively' do
       allow(Sanitize).to receive(:fragment).and_return(value)
       expect(value).to receive(:gsub).with(/drop\s+table/i, anything)
       described_class.new(collection_ref: nil, params: params)
     end
 
-    specify 'removes `insert into` case-insensitively'do
+    specify 'removes `insert into` case-insensitively' do
       allow(Sanitize).to receive(:fragment).and_return(value)
       expect(value).to receive(:gsub).with(/insert\s+into/i, anything)
       described_class.new(collection_ref: nil, params: params)
@@ -60,7 +62,7 @@ RSpec.describe MojFile::Add do
 
       it 'translate them to english letters' do
         moj_file_add = described_class.new(collection_ref: nil, params: params)
-        expect(moj_file_add.filename).to eq "IMGamp-aeiouUUwy.51y02"
+        expect(moj_file_add.filename).to eq 'IMGamp-aeiouUUwy.51y02'
       end
     end
   end
@@ -71,9 +73,9 @@ RSpec.describe MojFile::Add do
     before { ENV['DO_NOT_SCAN'] = nil }
 
     specify 'it creates a new instance of the scanner' do
-      expect(scanner).to receive(:new).
-        with(filename: filename, data: decoded_file_data, logger: a_kind_of(DummyLogger)).
-        and_return(scanner_instance)
+      expect(scanner).to receive(:new)
+        .with(filename: filename, data: decoded_file_data, logger: a_kind_of(DummyLogger))
+        .and_return(scanner_instance)
       subject.scan_clear?
     end
 
@@ -101,25 +103,24 @@ RSpec.describe MojFile::Add do
 
   describe '.write_test' do # These are mutant kills
     it 'uploads a test file successfully' do
-      stub_request(:put, /\/status\/status\.docx/).to_return(status: 200)
+      stub_request(:put, %r{/status/status\.docx}).to_return(status: 200)
       expect(described_class.write_test).to be_truthy
     end
 
     it 're-raises the exception if it fails to upload a test file' do
-      stub_request(:put, /\/status\/status\.docx/).to_return(status: 422)
-      expect{ described_class.write_test }.to raise_error(StandardError)
+      stub_request(:put, %r{/status/status\.docx}).to_return(status: 422)
+      expect { described_class.write_test }.to raise_error(StandardError)
     end
 
     it 'receives the parameters required for the test file' do
       response = double(:response, successful?: true)
-      expect(described_class).
-        to receive(:new).
-        with(collection_ref: 'status',
-             params: {
-              'file_filename' => 'status.docx',
-              'file_data' => 'QSBkb2N1bWVudCBib2R5'
-             }
-            ).and_return(instance_double(MojFile::Add, upload: response))
+      expect(described_class)
+        .to receive(:new)
+        .with(collection_ref: 'status',
+              params: {
+                'file_filename' => 'status.docx',
+                'file_data' => 'QSBkb2N1bWVudCBib2R5'
+              }).and_return(instance_double(MojFile::Add, upload: response))
       described_class.write_test
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require 'json'
 require 'logstash-logger'
@@ -93,7 +95,7 @@ module MojFile
         env = ENV['RACK_ENV']
         defaults = {
           formatter: :json_lines,
-          customize_event: Proc.new{ |event| event['tags'] = ['moj_uploader'] }
+          customize_event: proc { |event| event['tags'] = ['moj_uploader'] }
         }
 
         if env == 'production'
@@ -108,7 +110,7 @@ module MojFile
       end
 
       def statuschecks
-        service_status = [write_test, detect_infected, clean_file].any?{ |s| s == 'failed' } ? 'failed' : 'ok'
+        service_status = [write_test, detect_infected, clean_file].any? { |s| s == 'failed' } ? 'failed' : 'ok'
         {
           service_status: service_status,
           write_test: write_test,

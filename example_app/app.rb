@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require 'base64'
 require 'pry'
@@ -24,7 +26,7 @@ module MojFileUploadExample
       end
 
       def file_args
-        {collection_ref: collection_ref, filename: file[:filename], data: file_data}
+        { collection_ref: collection_ref, filename: file[:filename], data: file_data }
       end
 
       def log(msg)
@@ -33,29 +35,29 @@ module MojFileUploadExample
     end
 
     get '/' do
-      haml :index, locals: {collection_ref: generate_collection_ref}
+      haml :index, locals: { collection_ref: generate_collection_ref }
     end
 
     get '/:collection_ref' do |collection_ref|
       result = MojFileUploaderApiClient::ListFiles.new(collection_ref: collection_ref).call
-      log('List result: ' + result.inspect)
+      log("List result: #{result.inspect}")
 
-      haml :list_files, locals: {collection_ref: collection_ref, result: result}
+      haml :list_files, locals: { collection_ref: collection_ref, result: result }
     end
 
     post '/upload' do
-      log('Upload arguments: ' + file_args.inspect)
+      log("Upload arguments: #{file_args.inspect}")
       result = MojFileUploaderApiClient::AddFile.new(file_args).call
-      log('Upload result: ' + result.inspect)
+      log("Upload result: #{result.inspect}")
 
       status(result.code)
       body(result.body.to_json)
     end
 
     delete '/:collection_ref/:filename' do |collection_ref, filename|
-      log('Delete arguments: collection_ref: %s - filename: %s' % [collection_ref, filename])
+      log(format('Delete arguments: collection_ref: %s - filename: %s', collection_ref, filename))
       result = MojFileUploaderApiClient::DeleteFile.new(collection_ref: collection_ref, filename: filename).call
-      log('Delete result: ' + result.inspect)
+      log("Delete result: #{result.inspect}")
 
       status(200)
       body(result.body.to_json)

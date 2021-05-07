@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../spec_helper'
 
 RSpec.describe MojFile::Add do
@@ -6,31 +8,31 @@ RSpec.describe MojFile::Add do
   let(:container_name) { 'dummy-container' }
   let(:scanner_url) { 'http://my-test-scanner' }
 
-  let(:params) {
+  let(:params) do
     {
       folder: 'subfolder',
       file_filename: 'testfile.docx',
       file_data: encoded_file_data
     }
-  }
+  end
 
   before do
-    allow(SecureRandom).to receive(:uuid).and_return(12345)
+    allow(SecureRandom).to receive(:uuid).and_return(12_345)
     allow(ENV).to receive(:fetch).with('CONTAINER_NAME').and_return(container_name)
     allow(ENV).to receive(:fetch).with('SCANNER_URL', 'http://clamav-rest:8080/scan').and_return(scanner_url)
   end
 
-  let!(:blob_storage_stub) {
-    stub_request(:put, /dummy-account.blob.core.windows\.net\/dummy-container\/12345\/subfolder\/testfile.docx/).
-      with(body: decoded_file_data)
-  }
+  let!(:blob_storage_stub) do
+    stub_request(:put, %r{dummy-account.blob.core.windows\.net/dummy-container/12345/subfolder/testfile.docx})
+      .with(body: decoded_file_data)
+  end
 
-  let!(:av_stub) {
+  let!(:av_stub) do
     # Ideally, I would match the request body for filename and data.  This
     # would remove the need for unit tests for these specific attributes.
     # However, webmock does not yet support this for multipart requests.
-    stub_request(:post, "http://my-test-scanner").to_return(body: "true\n")
-  }
+    stub_request(:post, 'http://my-test-scanner').to_return(body: "true\n")
+  end
 
   context 'successfully adding a file' do
     context 'generating a new collection_reference' do
@@ -52,24 +54,24 @@ RSpec.describe MojFile::Add do
       describe 'json response body' do
         it 'contains the file key' do
           post '/new', params.to_json
-          expect(last_response.body).to match(/\"key\":\"testfile.docx\"/)
+          expect(last_response.body).to match(/"key":"testfile.docx"/)
         end
 
         it 'contains the collection reference' do
           post '/new', params.to_json
-          expect(last_response.body).to match(/\"collection\":12345/)
+          expect(last_response.body).to match(/"collection":12345/)
         end
 
         it 'contains the folder name' do
           post '/new', params.to_json
-          expect(last_response.body).to match(/\"folder\":\"subfolder\"/)
+          expect(last_response.body).to match(/"folder":"subfolder"/)
         end
       end
     end
 
     context 'without a folder' do
       before do
-        stub_request(:put, /dummy-account.blob.core.windows\.net\/dummy-container\/ABC123\/testfile.docx/)
+        stub_request(:put, %r{dummy-account.blob.core.windows\.net/dummy-container/ABC123/testfile.docx})
       end
 
       let(:params) { super().merge('folder' => nil) }
@@ -82,14 +84,14 @@ RSpec.describe MojFile::Add do
       describe 'json response body' do
         it 'contains the folder as null' do
           post '/ABC123/new', params.to_json
-          expect(last_response.body).to match(/\"folder\":null/)
+          expect(last_response.body).to match(/"folder":null/)
         end
       end
     end
 
     context 'reusing a collection_reference' do
       before do
-        stub_request(:put, /dummy-account.blob.core.windows\.net\/dummy-container\/ABC123\/subfolder\/testfile.docx/)
+        stub_request(:put, %r{dummy-account.blob.core.windows\.net/dummy-container/ABC123/subfolder/testfile.docx})
       end
 
       it 'returns a 200' do
@@ -100,7 +102,7 @@ RSpec.describe MojFile::Add do
       describe 'json response body' do
         it 'contains the collection reference' do
           post '/ABC123/new', params.to_json
-          expect(last_response.body).to match(/\"collection\":\"ABC123"/)
+          expect(last_response.body).to match(/"collection":"ABC123"/)
         end
       end
     end
@@ -123,13 +125,13 @@ RSpec.describe MojFile::Add do
       it 'explains the filename is missing' do
         params.delete(:file_filename)
         post '/new', params.to_json
-        expect(last_response.body).to match(/\"errors\":\[\"file_filename must be provided\"\]/)
+        expect(last_response.body).to match(/"errors":\["file_filename must be provided"\]/)
       end
 
       it 'explains the file data is missing' do
         params.delete(:file_data)
         post '/new', params.to_json
-        expect(last_response.body).to match(/\"errors\":\[\"file_data must be provided\"\]/)
+        expect(last_response.body).to match(/"errors":\["file_data must be provided"\]/)
       end
     end
   end

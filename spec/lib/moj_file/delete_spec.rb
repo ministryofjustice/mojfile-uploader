@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe MojFile::Delete do
-  let(:args) {
+  let(:args) do
     {
       collection: 'collection',
       folder: 'some_folder',
       filename: 'testfile.docx'
     }
-  }
+  end
 
   subject { described_class.new(args) }
 

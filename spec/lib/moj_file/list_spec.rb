@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe MojFile::List do
@@ -7,7 +9,9 @@ RSpec.describe MojFile::List do
   let(:folder) { 'subfolder' }
   let(:storage) { instance_double(Azure::Storage::Blob::BlobService, list_blobs: blobs) }
   let(:container_name) { 'dummy-container' }
-  let(:blobs) { [double('Blob', name: '12345/subfolder/test123.txt', properties:  { last_modified: '2016-12-01T16:26:44.000Z' })] }
+  let(:blobs) do
+    [double('Blob', name: '12345/subfolder/test123.txt', properties: { last_modified: '2016-12-01T16:26:44.000Z' })]
+  end
 
   subject { described_class.new(collection_ref, folder: folder) }
 
@@ -22,16 +26,16 @@ RSpec.describe MojFile::List do
       allow(subject).to receive(:storage).and_return(storage)
     end
 
-    let(:expected_files_hash) {
+    let(:expected_files_hash) do
       {
         collection: collection_ref,
         folder: folder,
         files: [
-          {key: '12345/subfolder/test123.txt', title: 'test123.txt', last_modified: '2016-12-01T16:26:44.000Z'}
+          { key: '12345/subfolder/test123.txt', title: 'test123.txt', last_modified: '2016-12-01T16:26:44.000Z' }
         ],
         action: 'List'
       }
-    }
+    end
 
     it 'list Azure Blob Storage container blobs by their collection reference including a trailing slash' do
       expect(storage).to receive(:list_blobs).with(container_name, prefix: '12345/subfolder/')
@@ -40,17 +44,19 @@ RSpec.describe MojFile::List do
     end
 
     context 'when no folder is given' do
-      let(:expected_files_hash) {
+      let(:expected_files_hash) do
         {
           collection: collection_ref,
           folder: folder,
           files: [
-            {key: '12345/test123.txt', title: 'test123.txt', last_modified: '2016-12-01T16:26:44.000Z'}
+            { key: '12345/test123.txt', title: 'test123.txt', last_modified: '2016-12-01T16:26:44.000Z' }
           ],
           action: 'List'
         }
-      }
-      let(:blobs) { [double('Blob', name: '12345/test123.txt', properties:  { last_modified: '2016-12-01T16:26:44.000Z' })] }
+      end
+      let(:blobs) do
+        [double('Blob', name: '12345/test123.txt', properties: { last_modified: '2016-12-01T16:26:44.000Z' })]
+      end
       let(:folder) { nil }
 
       it 'list Azure Blob Storage container blobs by their collection reference including a trailing slash' do

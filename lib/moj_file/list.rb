@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MojFile
   class List
     include MojFile::AzureBlobStorage
@@ -23,8 +25,8 @@ module MojFile
         folder: folder,
         files: map_files
       }.tap { |o| log_result(o) }
-    rescue => error
-      log_result(error: error.inspect, backtrace: error.backtrace)
+    rescue StandardError => e
+      log_result(error: e.inspect, backtrace: e.backtrace)
       raise
     end
 
@@ -35,17 +37,17 @@ module MojFile
     private
 
     def map_files
-      blobs.map{ |o|
+      blobs.map do |o|
         {
           key: o.name,
-          title: o.name.sub(prefix,''),
+          title: o.name.sub(prefix, ''),
           last_modified: o.properties[:last_modified]
         }
-      }
+      end
     end
 
     def prefix
-      [collection, folder].compact.join('/') + '/'
+      "#{[collection, folder].compact.join('/')}/"
     end
 
     def container_name

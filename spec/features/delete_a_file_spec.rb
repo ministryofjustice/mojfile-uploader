@@ -1,12 +1,15 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe MojFile::Delete do
   context 'the file exists' do
     context 'and is in a subfolder' do
-      let!(:blob_storage_stub) {
-        stub_request(:delete, /dummy-account.blob.core.windows\.net\/dummy-container\/ABC123\/subfolder\/testfile\.docx/).
-        to_return(status: 204)
-      }
+      let!(:blob_storage_stub) do
+        stub_request(:delete,
+                     %r{dummy-account.blob.core.windows\.net/dummy-container/ABC123/subfolder/testfile\.docx})
+          .to_return(status: 204)
+      end
 
       describe '#delete' do
         before do
@@ -21,10 +24,10 @@ RSpec.describe MojFile::Delete do
     end
 
     context 'and is not in a subfolder' do
-      let!(:blob_storage_stub) {
-        stub_request(:delete, /dummy-account.blob.core.windows\.net\/dummy-container\/ABC123\/testfile\.docx/).
-        to_return(status: 204)
-      }
+      let!(:blob_storage_stub) do
+        stub_request(:delete, %r{dummy-account.blob.core.windows\.net/dummy-container/ABC123/testfile\.docx})
+          .to_return(status: 204)
+      end
 
       describe '#delete' do
         before do
@@ -40,10 +43,10 @@ RSpec.describe MojFile::Delete do
   end
 
   describe 'the file does not exist' do
-    let!(:blob_storage_stub) {
-      stub_request(:delete, /dummy-account.blob.core.windows\.net\/dummy-container\/ABC123\/nofile\.docx/).
-      to_return(status: 204)
-    }
+    let!(:blob_storage_stub) do
+      stub_request(:delete, %r{dummy-account.blob.core.windows\.net/dummy-container/ABC123/nofile\.docx})
+        .to_return(status: 204)
+    end
 
     describe '#delete' do
       before do
@@ -58,10 +61,10 @@ RSpec.describe MojFile::Delete do
   end
 
   describe 'neither collection nor file exists' do
-    let!(:blob_storage_stub) {
-      stub_request(:delete, /dummy-account.blob.core.windows\.net\/dummy-container\/123ABC\/nofile\.docx/).
-      to_return(status: 204)
-    }
+    let!(:blob_storage_stub) do
+      stub_request(:delete, %r{dummy-account.blob.core.windows\.net/dummy-container/123ABC/nofile\.docx})
+        .to_return(status: 204)
+    end
 
     describe '#delete' do
       before do

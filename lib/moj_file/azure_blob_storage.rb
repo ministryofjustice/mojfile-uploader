@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module MojFile
   module AzureBlobStorage
-
     def storage
       Azure::Storage::Blob::BlobService.create
     end

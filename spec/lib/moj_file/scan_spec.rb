@@ -1,16 +1,18 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe MojFile::Scan do
-  let(:params) {
+  let(:params) do
     {
       filename: 'testfile.docx',
       data: Base64.encode64('Encoded document body')
     }
-  }
+  end
 
-  let!(:rest_client_stub) {
+  let!(:rest_client_stub) do
     allow(RestClient).to receive(:post)
-  }
+  end
 
   let(:clean_result) { "true\n" }
   let(:infected_result) { "false\n" }
@@ -28,11 +30,11 @@ RSpec.describe MojFile::Scan do
 
   describe '.statuscheck_clean' do
     it 'sends a simple file name to aid identifying these calls in the logs' do
-      expect(described_class).
-        to receive(:new).
-        with(hash_including(filename: 'clean test')).and_return(
+      expect(described_class)
+        .to receive(:new)
+        .with(hash_including(filename: 'clean test')).and_return(
           instance_double(described_class, scan_clear?: true)
-      )
+        )
       described_class.statuscheck_clean
     end
 
@@ -51,11 +53,11 @@ RSpec.describe MojFile::Scan do
 
   describe '.statuscheck_infected' do
     it 'sends a simple file name to aid identifying these calls in the logs' do
-      expect(described_class).
-        to receive(:new).
-        with(hash_including(filename: 'eicar test')).and_return(
+      expect(described_class)
+        .to receive(:new)
+        .with(hash_including(filename: 'eicar test')).and_return(
           instance_double(described_class, scan_clear?: false)
-      )
+        )
       described_class.statuscheck_infected
     end
 
@@ -84,8 +86,8 @@ RSpec.describe MojFile::Scan do
 
       it 'returns true' do
         expect(
-          described_class.
-          new(filename: params[:filename], data: params[:data]).scan_clear?
+          described_class
+          .new(filename: params[:filename], data: params[:data]).scan_clear?
         ).to be_truthy
       end
     end
@@ -97,8 +99,8 @@ RSpec.describe MojFile::Scan do
 
       it 'returns false' do
         expect(
-          described_class.
-          new(filename: params[:filename], data: params[:data]).scan_clear?
+          described_class
+          .new(filename: params[:filename], data: params[:data]).scan_clear?
         ).to be_falsey
       end
     end
@@ -119,10 +121,10 @@ RSpec.describe MojFile::Scan do
     end
 
     context 'RestClient' do
-      subject(:scan_file) {
-        described_class.new(filename: params[:filename], data: params[:data]).
-        scan_clear?
-      }
+      subject(:scan_file) do
+        described_class.new(filename: params[:filename], data: params[:data])
+                       .scan_clear?
+      end
 
       let(:rest_client_called) { expect(RestClient).to receive(:post) }
       let(:scanner_url) { 'http://my-test-scanner' }
@@ -132,29 +134,29 @@ RSpec.describe MojFile::Scan do
       end
 
       it 'is called with the correct endpoint' do
-        rest_client_called.with('http://my-test-scanner', anything).
-          and_return(resp)
+        rest_client_called.with('http://my-test-scanner', anything)
+                          .and_return(resp)
         scan_file
       end
 
       it 'is called with the filename' do
-        rest_client_called.
-          with(anything, hash_including(name: params[:filename])).
-          and_return(resp)
+        rest_client_called
+          .with(anything, hash_including(name: params[:filename]))
+          .and_return(resp)
         scan_file
       end
 
       it 'is called with the data/content of the file' do
-        rest_client_called.
-          with(anything, hash_including(file: instance_of(MojFile::DummyPath))).
-          and_return(resp)
+        rest_client_called
+          .with(anything, hash_including(file: instance_of(MojFile::DummyPath)))
+          .and_return(resp)
         scan_file
       end
 
       it 'uses multipart' do
-        rest_client_called.
-          with(anything, hash_including(multipart: true)).
-          and_return(resp)
+        rest_client_called
+          .with(anything, hash_including(multipart: true))
+          .and_return(resp)
         scan_file
       end
 
