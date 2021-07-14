@@ -11,7 +11,7 @@ ruby '2.7.4'
 
 gem 'application_insights', '~> 0.5.6'
 gem 'azure_env_secrets', github: 'ministryofjustice/azure_env_secrets', tag: 'v0.1.3'
-gem 'azure-storage-blob', '~> 1.1'
+gem 'azure-storage-blob', '~> 2'
 gem 'logstash-logger'
 gem 'mimemagic', '~> 0.3.3'
 gem 'pry'
@@ -19,7 +19,7 @@ gem 'puma'
 gem 'rake'
 gem 'rest-client'
 gem 'sanitize'
-gem 'sentry-raven'
+gem 'sentry-ruby', '~> 4.6'
 gem 'sinatra'
 
 group :development, :test do
