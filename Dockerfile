@@ -19,7 +19,7 @@ RUN apt-get update -q && \
     rm -rf /var/lib/apt/lists/* && rm -fr *Release* *Sources* *Packages* && \
     truncate -s 0 /var/log/*log
 
-RUN bash -lc 'rvm get stable; rvm install 2.7.3; rvm --default use ruby-2.7.3'
+RUN bash -lc 'rvm get stable; rvm install 2.7.4; rvm --default use ruby-2.7.4'
 
 COPY . /home/app
 WORKDIR /home/app
