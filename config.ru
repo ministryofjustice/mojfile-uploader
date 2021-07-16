@@ -5,17 +5,21 @@ require 'azure_env_secrets'
 ::AzureEnvSecrets.load
 
 require 'application_insights'
-require 'raven'
+require 'sentry-ruby'
 require 'sinatra'
 require_relative 'app'
 
-Raven.configure do |config|
-  config.ssl_verification = ENV['SENTRY_SSL_VERIFICATION'] == true
+Sentry.init do |config|
+  config.dsn = ENV['SENTRY_DSN']
+  config.breadcrumbs_logger = [:sentry_logger, :http_logger]
+
+  config.traces_sample_rate = 0.5
+  # config.transport.ssl_verification = ENV['SENTRY_SSL_VERIFICATION'] == true
+  config.transport.ssl_verification = true
 end
 
 use ApplicationInsights::Rack::TrackRequest, ENV['AZURE_APP_INSIGHTS_INSTRUMENTATION_KEY']
 
-# Will use SENTRY_DSN environment variable if set
-use Raven::Rack
+use Sentry::Rack::CaptureExceptions
 
 run MojFile::Uploader
