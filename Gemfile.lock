@@ -6,6 +6,11 @@ GIT
     azure_env_secrets (0.1.3)
 
 GEM
+  remote: https://oss:Q7U7p2q2XlpY45kwqjCpXLIPf122rjkR@gem.mutant.dev/
+  specs:
+    mutant-license (0.1.1.2.1739399027284447558325915053311580324856.4)
+
+GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.8.0)
@@ -206,6 +211,7 @@ DEPENDENCIES
   fuubar
   logstash-logger
   mimemagic (~> 0.3.3)
+  mutant-license!
   mutant-rspec
   pry
   pry-byebug
@@ -227,4 +233,4 @@ RUBY VERSION
    ruby 2.7.4p191
 
 BUNDLED WITH
-   2.2.15
+   2.2.28

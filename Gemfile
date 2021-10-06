@@ -23,6 +23,10 @@ gem 'sentry-ruby', '~> 4.6'
 gem 'sinatra'
 
 group :development, :test do
+  source 'https://oss:Q7U7p2q2XlpY45kwqjCpXLIPf122rjkR@gem.mutant.dev' do
+    gem 'mutant-license'
+  end
+
   gem 'dotenv'
   gem 'mutant-rspec'
   gem 'pry-byebug'
