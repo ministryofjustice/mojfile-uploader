@@ -24,7 +24,7 @@ RUN bash -lc 'rvm get stable; rvm install 2.7.4; rvm --default use ruby-2.7.4'
 COPY . /home/app
 WORKDIR /home/app
 
-RUN gem install bundler -v 2.2.15
+RUN gem install bundler -v 2.2.28
 RUN bundle install --without test development
 
 ENV PUMA_PORT 8000
