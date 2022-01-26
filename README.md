@@ -118,7 +118,14 @@ cp .env.example .env
 
 Update the details in that file.
 
-**With docker**
+You can create a new Azure storage in the Azure Portal [stgttfilestore account](https://portal.azure.com/#@HMCTS.NET/resource/subscriptions/58a2ce36-4e09-467b-8330-d164aa559c68/resourceGroups/tt_stg_taxtribunalsazure_resource_group/providers/Microsoft.Storage/storageAccounts/stgttfilestore/containersList)
+
+Then in any account you want to use to access MOJFile-Uploader using MOJFile-Uploader-API-Client, please update:
+AZURE_STORAGE_ACCOUNT
+AZURE_STORAGE_ACCESS_KEY
+CONTAINER_NAME
+
+**With docker - no longer supported**
 
 ```
 docker-compose build
@@ -128,17 +135,18 @@ The above commands will create and run the uploader and the AV scanner container
 
 **Without docker**
 
-The AV scanner must be running before you start the uploader.
+Run:
+
+```
+DO_NOT_SCAN=true dotenv rackup
+```
+
+If you do not want to skip virus scanning, The AV scanner must be running before you start the uploader. Then run:
 
 ```
 dotenv rackup
 ```
 
-To skip the AV scanning, run:
-
-```
-DO_NOT_SCAN=true dotenv rackup
-```
 
 ## Scanner endpoint
 
